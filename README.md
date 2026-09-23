@@ -55,7 +55,7 @@ production and on every branch. Three full runs (`data/rehearse-production*.txt`
 | `001` add `source` column with a default | pass | pass |
 | `002` unique index on `lower(email)` | pass | **fail**: 1,250 addresses appear twice |
 | `003` `CREATE INDEX` on `orders(created_at)` | pass | **fail**: writes blocked 2.3 to 3.1 s |
-| `004` `amount_cents` integer to bigint | pass | **fail**: reads and writes blocked 7.9 to 13.1 s |
+| `004` `amount_cents` integer to bigint | pass | **fail**: reads and writes blocked 8.0 to 13.1 s |
 | `005` `phone SET NOT NULL` | pass | **fail**: 15,000 NULL phones |
 | `006` archive refunded orders | pass | **fail**: about 2.13 million orders deleted, never archived |
 
