@@ -3,8 +3,11 @@ name: Rehearse migrations
 # The rehearsal code and its dependencies come from the base branch, never from the pull
 # request: a pull request could otherwise change a script or package.json and read the key.
 # The only thing taken from the pull request is the SQL of the migrations it adds or changes.
-# That SQL still runs against a branch of production data, so only rehearse pull requests from
-# people who can push to this repository, and keep the key scoped to this project.
+#
+# A pull request from this repository can still change this workflow file, and a changed
+# workflow runs. So the key is not a repository secret: it lives in the migration-rehearsal
+# environment, which needs a reviewer to approve each run before the job gets it. Approve only
+# after reading the workflow diff. The key itself is scoped to this one Neon project.
 
 on:
   pull_request:
@@ -24,6 +27,7 @@ jobs:
     # Pull requests from forks get no secrets; only rehearse branches of this repository.
     if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
+    environment: migration-rehearsal
     timeout-minutes: 20
     steps:
       - name: Check out the base branch (trusted code)
@@ -46,18 +50,34 @@ jobs:
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           git fetch --no-tags origin "$HEAD_SHA"
-          mkdir -p "$RUNNER_TEMP/pr-migrations"
-          files=""
-          for path in $(git diff --name-only --diff-filter=AM "$BASE_SHA...$HEAD_SHA" -- 'migrations/*.sql' | sort); do
+          dir="$RUNNER_TEMP/pr-migrations"
+          mkdir -p "$dir"
+          # Added, copied, modified and renamed files, NUL-separated so no file name can split.
+          # A rename or copy prints two paths; the second is the new one.
+          git diff -z --name-status --diff-filter=ACMR "$BASE_SHA...$HEAD_SHA" -- migrations/ > "$RUNNER_TEMP/changed"
+          names=""
+          while IFS= read -r -d '' status; do
+            IFS= read -r -d '' path
+            case "$status" in R* | C*) IFS= read -r -d '' path ;; esac
+            # A file name must not be able to write workflow commands into the log.
+            shown=$(printf '%s' "$path" | tr -c 'A-Za-z0-9_./-' '?')
             case "$path" in
-              migrations/*/*) continue ;;
+              migrations/*/*) echo "::notice::Not rehearsed: $shown (only files directly in migrations/ are migrations)"; continue ;;
+              *.sql) ;;
+              *) echo "::notice::Not rehearsed: $shown (not a .sql file)"; continue ;;
             esac
-            name=$(basename "$path")
-            if ! printf '%s' "$name" | grep -Eq '^[A-Za-z0-9_.-]+\.sql$'; then continue; fi
-            git show "$HEAD_SHA:$path" > "$RUNNER_TEMP/pr-migrations/$name"
-            files="$files $RUNNER_TEMP/pr-migrations/$name"
-          done
+            name="${path#migrations/}"
+            if [ "$shown" != "$path" ] || ! printf '%s' "$name" | grep -Eq '^[A-Za-z0-9_.-]+\.sql$'; then
+              echo "::error::Migration file names may use only letters, digits, '_', '.' and '-': $shown"
+              exit 1
+            fi
+            git show "$HEAD_SHA:$path" > "$dir/$name"
+            names="$names$name"$'\n'
+          done < "$RUNNER_TEMP/changed"
+          # Names are checked above, so a newline-separated sort is safe. Order is the file name order.
+          files=$(printf '%s' "$names" | sort | sed "s|^|$dir/|" | tr '\n' ' ')
           echo "files=$files" >> "$GITHUB_OUTPUT"
+          [ -n "$files" ] || echo "::notice::This pull request changes no migration in migrations/."
 
       - name: Rehearse on a Neon branch of production
         if: steps.changed.outputs.files != ''

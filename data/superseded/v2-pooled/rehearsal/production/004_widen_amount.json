@@ -1,0 +1,55 @@
+{
+  "migration": "004_widen_amount.sql",
+  "against": "production",
+  "branch": "rehearse-004-widen-amount-mued0ksw",
+  "branchReadyMs": 6642,
+  "warmupMs": 2184,
+  "migrationMs": 8406,
+  "error": null,
+  "traffic": {
+    "inserted": 23,
+    "writesDuring": 1,
+    "readsDuring": 2,
+    "worstWriteMs": 8377,
+    "worstReadMs": 8252,
+    "failedOps": []
+  },
+  "lockWaits": {},
+  "rowsBefore": {
+    "customers": 500000,
+    "orders": 4000000,
+    "orders_archive": 0
+  },
+  "rowsAfter": {
+    "customers": 500000,
+    "orders": 4000023,
+    "orders_archive": 0
+  },
+  "rowDeltas": {
+    "customers": 0,
+    "orders": 0,
+    "orders_archive": 0
+  },
+  "gates": {
+    "runs": {
+      "pass": true,
+      "reason": "completed"
+    },
+    "app": {
+      "pass": true,
+      "reason": "no app query failed"
+    },
+    "blocking": {
+      "pass": false,
+      "reason": "worst write 8377 ms, worst read 8252 ms (limit 1000 ms)"
+    },
+    "rows": {
+      "pass": true,
+      "reason": "no table lost rows"
+    }
+  },
+  "verdict": "FAIL",
+  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-gentle-surf-b2l8al8s)\n@@ -55,9 +55,9 @@\n \n CREATE TABLE public.orders (\n     id bigint NOT NULL,\n     customer_id bigint NOT NULL,\n-    amount_cents integer NOT NULL,\n+    amount_cents bigint NOT NULL,\n     status text NOT NULL,\n     created_at timestamp with time zone DEFAULT now() NOT NULL\n );",
+  "cycleMs": 34229,
+  "deleteError": null
+}

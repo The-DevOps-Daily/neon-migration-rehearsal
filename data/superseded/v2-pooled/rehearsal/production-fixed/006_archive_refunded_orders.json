@@ -1,0 +1,55 @@
+{
+  "migration": "006_archive_refunded_orders.sql",
+  "against": "production",
+  "branch": "rehearse-006-archive-refunded-orders-muedbros",
+  "branchReadyMs": 2282,
+  "warmupMs": 1855,
+  "migrationMs": 2687,
+  "error": null,
+  "traffic": {
+    "inserted": 38,
+    "writesDuring": 17,
+    "readsDuring": 19,
+    "worstWriteMs": 73,
+    "worstReadMs": 43,
+    "failedOps": []
+  },
+  "lockWaits": {},
+  "rowsBefore": {
+    "customers": 500000,
+    "orders": 4000000,
+    "orders_archive": 0
+  },
+  "rowsAfter": {
+    "customers": 500000,
+    "orders": 3466723,
+    "orders_archive": 533315
+  },
+  "rowDeltas": {
+    "customers": 0,
+    "orders": -533315,
+    "orders_archive": 533315
+  },
+  "gates": {
+    "runs": {
+      "pass": true,
+      "reason": "completed"
+    },
+    "app": {
+      "pass": true,
+      "reason": "no app query failed"
+    },
+    "blocking": {
+      "pass": true,
+      "reason": "worst write 73 ms, worst read 43 ms (limit 1000 ms)"
+    },
+    "rows": {
+      "pass": true,
+      "reason": "533315 rows moved orders -> orders_archive (counts match)"
+    }
+  },
+  "verdict": "PASS",
+  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-long-hat-b2oz8ju8)",
+  "cycleMs": 24478,
+  "deleteError": null
+}

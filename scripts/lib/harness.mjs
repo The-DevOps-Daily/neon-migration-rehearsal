@@ -15,24 +15,30 @@ export async function rowCounts(client) {
   return counts;
 }
 
+const APP = 'rehearsal-app';
+
 /**
  * A tiny app: one connection writing orders and one reading them, each running one query about
- * every 100 ms, plus a watcher sampling pg_stat_activity for those two sessions waiting on a lock.
+ * every 100 ms, plus a watcher sampling pg_stat_activity for app queries waiting on a lock.
+ * The app connects through `appUri` (the pooled string, as most apps on Neon do) and the watcher
+ * through `uri` (direct). The pooler moves an app client between backends, so the watcher finds
+ * app queries by application_name, which the pooler passes on, not by backend PID.
  */
-async function startTraffic(uri, maxOrderId, maxCustomerId) {
+async function startTraffic(uri, appUri, maxOrderId, maxCustomerId, includeDetail) {
   const opened = [];
   try {
-    for (let i = 0; i < 3; i++) opened.push(await connect(uri));
+    // query_timeout is enforced by the driver: session SETs do not hold through a transaction pooler.
+    for (let i = 0; i < 2; i++) opened.push(await connect(appUri, { application_name: APP, query_timeout: 300_000 }));
+    opened.push(await connect(uri, { query_timeout: 60_000 }));
   } catch (e) {
     await Promise.allSettled(opened.map((c) => c.end()));
     throw e;
   }
   const [writer, reader, watcher] = opened;
-  for (const c of opened) await c.query(`SET statement_timeout = '300s'`);
-  const appPids = [writer.processID, reader.processID];
 
   const ops = [];
   const waits = new Map();
+  const samples = { ok: 0, failed: 0 };
   let running = true;
   let inserted = 0;
   const pick = (max) => 1 + Math.floor(Math.random() * max);
@@ -43,7 +49,7 @@ async function startTraffic(uri, maxOrderId, maxCustomerId) {
       try {
         await fn();
       } catch (e) {
-        error = e.message;
+        error = describeError(e, includeDetail);
       }
       ops.push({ kind, at: started, ms: Date.now() - started, error });
       await new Promise((r) => setTimeout(r, 100));
@@ -56,15 +62,17 @@ async function startTraffic(uri, maxOrderId, maxCustomerId) {
           `SELECT left(query, 70) AS query, wait_event,
                   extract(epoch FROM now() - query_start) * 1000 AS age_ms
            FROM pg_stat_activity
-           WHERE pid = ANY($1) AND wait_event_type = 'Lock'`,
-          [appPids],
+           WHERE application_name = $1 AND wait_event_type = 'Lock'`,
+          [APP],
         );
         for (const r of rows) {
           const key = `${r.wait_event}: ${r.query.replace(/\s+/g, ' ')}`;
           waits.set(key, Math.max(waits.get(key) ?? 0, Math.round(r.age_ms)));
         }
+        samples.ok += 1;
       } catch {
-        // a failed sample loses one observation, never the run
+        // a failed sample loses one observation, never the run; the count is reported
+        samples.failed += 1;
       }
       await new Promise((r) => setTimeout(r, 200));
     }
@@ -82,6 +90,7 @@ async function startTraffic(uri, maxOrderId, maxCustomerId) {
   ];
   return {
     ops,
+    samples,
     get inserted() {
       return inserted;
     },
@@ -123,18 +132,45 @@ function rowsGate(deltas, moves) {
   return { pass: true, reason: moved ?? 'no table lost rows' };
 }
 
+// Postgres conditions a public result may name. Anything else is reported by code only.
+const CONDITIONS = {
+  '23505': 'unique_violation',
+  '23502': 'not_null_violation',
+  '23503': 'foreign_key_violation',
+  '23514': 'check_violation',
+  '22P02': 'invalid_text_representation',
+  '42P01': 'undefined_table',
+  '42703': 'undefined_column',
+  '55P03': 'lock_not_available',
+  '57014': 'query_canceled',
+  '25001': 'active_sql_transaction',
+};
+
+// Error messages can quote values (a failed cast prints the value) and DETAIL quotes rows, so
+// public output gets only the SQLSTATE code and its condition name.
+export function describeError(e, includeDetail) {
+  if (includeDetail) return e.detail ? `${e.message} (${e.detail})` : e.message;
+  return `SQLSTATE ${e.code ?? 'unknown'}${CONDITIONS[e.code] ? ` ${CONDITIONS[e.code]}` : ''}`;
+}
+
 /**
  * Run `sql` on the database at `uri` with traffic around it, and apply four gates: it runs, the
  * app's queries do not fail, no app query waits longer than `stallMs`, and no table loses rows
  * (for a declared move, the counts leaving one table and arriving in the other must match).
- * `includeDetail` adds Postgres' error DETAIL, which can quote row values: keep it out of
- * anything public.
+ * With `includeDetail` false, errors are reported as SQLSTATE codes only (see describeError).
  */
-export async function runWithTraffic(uri, sql, { stallMs = 1000, beforeRun, includeDetail = true } = {}) {
+export async function runWithTraffic(
+  uri,
+  sql,
+  { appUri = uri, stallMs = 1000, beforeRun, includeDetail = true, statementTimeout = '10min' } = {},
+) {
   const meta = header(sql);
+  // The migration takes the direct connection, as Neon advises for schema changes.
   const client = await connect(uri);
   let traffic = null;
   try {
+    // A runaway migration must not hold the branch (or production) forever.
+    await client.query(`SET statement_timeout = '${statementTimeout}'`);
     if (beforeRun) await beforeRun(client);
     // Reading every table once also pulls it through the compute's cache before the timing starts.
     const warmStarted = Date.now();
@@ -144,7 +180,7 @@ export async function runWithTraffic(uri, sql, { stallMs = 1000, beforeRun, incl
       'SELECT (SELECT max(id) FROM orders) AS o, (SELECT max(id) FROM customers) AS c',
     );
 
-    traffic = await startTraffic(uri, Number(ids[0].o ?? 1), Number(ids[0].c ?? 1));
+    traffic = await startTraffic(uri, appUri, Number(ids[0].o ?? 1), Number(ids[0].c ?? 1), includeDetail);
     await new Promise((r) => setTimeout(r, 1500));
 
     const started = Date.now();
@@ -158,7 +194,7 @@ export async function runWithTraffic(uri, sql, { stallMs = 1000, beforeRun, incl
         await client.query('COMMIT');
       }
     } catch (e) {
-      error = includeDetail && e.detail ? `${e.message} (${e.detail})` : e.message;
+      error = describeError(e, includeDetail);
       await client.query('ROLLBACK').catch(() => {});
     }
     const finished = Date.now();
@@ -167,6 +203,7 @@ export async function runWithTraffic(uri, sql, { stallMs = 1000, beforeRun, incl
     // Read these after stop(): an insert still in flight at stop time counts too.
     const ops = traffic.ops;
     const inserted = traffic.inserted;
+    const lockSamples = traffic.samples;
     traffic = null;
 
     const overlapping = ops.filter((o) => o.at + o.ms >= started && o.at <= finished);
@@ -190,15 +227,27 @@ export async function runWithTraffic(uri, sql, { stallMs = 1000, beforeRun, incl
         pass: appErrors.length === 0,
         reason: appErrors.length ? `${appErrors.length} app queries failed, first: ${appErrors[0]}` : 'no app query failed',
       },
-      blocking: {
-        pass: worstWrite < stallMs && worstRead < stallMs,
-        reason: covered
-          ? `worst write ${worstWrite} ms, worst read ${worstRead} ms (limit ${stallMs} ms)`
-          : `the migration ended before a read and a write overlapped it (${finished - started} ms); worst seen ${Math.max(worstWrite, worstRead)} ms`,
-      },
+      // Without a read and a write overlapping the migration there is nothing to judge, unless the
+      // migration itself was shorter than the limit (then nothing could have waited that long).
+      blocking: covered
+        ? {
+            pass: worstWrite < stallMs && worstRead < stallMs,
+            reason: `worst write ${worstWrite} ms, worst read ${worstRead} ms (limit ${stallMs} ms)`,
+          }
+        : {
+            pass: finished - started < stallMs,
+            reason:
+              finished - started < stallMs
+                ? `ran for ${finished - started} ms, under the ${stallMs} ms limit, before app traffic overlapped it`
+                : `not enough app traffic overlapped the ${finished - started} ms migration to judge`,
+          },
       rows: rowsGate(deltas, meta.moves),
     };
     return {
+      connections: {
+        migration: uri.includes('-pooler.') ? 'pooled' : 'direct',
+        app: appUri.includes('-pooler.') ? 'pooled' : 'direct',
+      },
       warmupMs,
       migrationMs: finished - started,
       error,
@@ -212,6 +261,7 @@ export async function runWithTraffic(uri, sql, { stallMs = 1000, beforeRun, incl
       },
       // Age of an app query seen waiting on a lock: an upper estimate of its lock wait, sampled every 200 ms.
       lockWaits,
+      lockSamples,
       rowsBefore: before,
       rowsAfter: after,
       rowDeltas: deltas,

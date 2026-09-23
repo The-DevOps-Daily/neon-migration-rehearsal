@@ -1,20 +1,29 @@
 {
+  "id": "001_add_order_source.sql",
   "migration": "001_add_order_source.sql",
   "against": "fixtures",
-  "branch": "rehearse-001-add-order-source-mued872g",
-  "branchReadyMs": 5699,
-  "warmupMs": 155,
+  "branch": "rehearse-001-add-order-source-mueec11v",
+  "branchReadyMs": 5783,
+  "connections": {
+    "migration": "direct",
+    "app": "pooled"
+  },
+  "warmupMs": 145,
   "migrationMs": 96,
   "error": null,
   "traffic": {
     "inserted": 23,
     "writesDuring": 1,
     "readsDuring": 1,
-    "worstWriteMs": 37,
-    "worstReadMs": 36,
+    "worstWriteMs": 33,
+    "worstReadMs": 33,
     "failedOps": []
   },
   "lockWaits": {},
+  "lockSamples": {
+    "ok": 13,
+    "failed": 0
+  },
   "rowsBefore": {
     "customers": 50,
     "orders": 200,
@@ -41,7 +50,7 @@
     },
     "blocking": {
       "pass": true,
-      "reason": "worst write 37 ms, worst read 36 ms (limit 1000 ms)"
+      "reason": "worst write 33 ms, worst read 33 ms (limit 1000 ms)"
     },
     "rows": {
       "pass": true,
@@ -49,7 +58,7 @@
     }
   },
   "verdict": "PASS",
-  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-weathered-hall-b2a5if1b)\n@@ -57,9 +57,10 @@\n     id bigint NOT NULL,\n     customer_id bigint NOT NULL,\n     amount_cents integer NOT NULL,\n     status text NOT NULL,\n-    created_at timestamp with time zone DEFAULT now() NOT NULL\n+    created_at timestamp with time zone DEFAULT now() NOT NULL,\n+    source text DEFAULT 'web'::text NOT NULL\n );\n \n \n ALTER TABLE public.orders OWNER TO neondb_owner;",
-  "cycleMs": 23613,
+  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-wild-base-b290vduj)\n@@ -57,9 +57,10 @@\n     id bigint NOT NULL,\n     customer_id bigint NOT NULL,\n     amount_cents integer NOT NULL,\n     status text NOT NULL,\n-    created_at timestamp with time zone DEFAULT now() NOT NULL\n+    created_at timestamp with time zone DEFAULT now() NOT NULL,\n+    source text DEFAULT 'web'::text NOT NULL\n );\n \n \n ALTER TABLE public.orders OWNER TO neondb_owner;",
+  "cycleMs": 21329,
   "deleteError": null
 }

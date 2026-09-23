@@ -1,20 +1,29 @@
 {
+  "id": "002_unique_customer_email.sql",
   "migration": "002_unique_customer_email.sql",
   "against": "production",
-  "branch": "rehearse-002-unique-customer-email-mued2plu",
-  "branchReadyMs": 3145,
-  "warmupMs": 2328,
-  "migrationMs": 391,
-  "error": "could not create unique index \"customers_email_lower_key\" (Key (lower(email))=(user109199@example.com) is duplicated.)",
+  "branch": "rehearse-002-unique-customer-email-muee5wb1",
+  "branchReadyMs": 2364,
+  "connections": {
+    "migration": "direct",
+    "app": "pooled"
+  },
+  "warmupMs": 2624,
+  "migrationMs": 359,
+  "error": "could not create unique index \"customers_email_lower_key\" (Key (lower(email))=(user103999@example.com) is duplicated.)",
   "traffic": {
-    "inserted": 25,
+    "inserted": 23,
     "writesDuring": 3,
     "readsDuring": 3,
-    "worstWriteMs": 48,
-    "worstReadMs": 47,
+    "worstWriteMs": 59,
+    "worstReadMs": 48,
     "failedOps": []
   },
   "lockWaits": {},
+  "lockSamples": {
+    "ok": 14,
+    "failed": 0
+  },
   "rowsBefore": {
     "customers": 500000,
     "orders": 4000000,
@@ -22,7 +31,7 @@
   },
   "rowsAfter": {
     "customers": 500000,
-    "orders": 4000025,
+    "orders": 4000023,
     "orders_archive": 0
   },
   "rowDeltas": {
@@ -33,7 +42,7 @@
   "gates": {
     "runs": {
       "pass": false,
-      "reason": "could not create unique index \"customers_email_lower_key\" (Key (lower(email))=(user109199@example.com) is duplicated.)"
+      "reason": "could not create unique index \"customers_email_lower_key\" (Key (lower(email))=(user103999@example.com) is duplicated.)"
     },
     "app": {
       "pass": true,
@@ -41,7 +50,7 @@
     },
     "blocking": {
       "pass": true,
-      "reason": "worst write 48 ms, worst read 47 ms (limit 1000 ms)"
+      "reason": "worst write 59 ms, worst read 48 ms (limit 1000 ms)"
     },
     "rows": {
       "pass": true,
@@ -50,6 +59,6 @@
   },
   "verdict": "FAIL",
   "schemaDiff": "",
-  "cycleMs": 14213,
+  "cycleMs": 14603,
   "deleteError": null
 }

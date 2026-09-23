@@ -1,20 +1,29 @@
 {
+  "id": "005_require_customer_phone.sql",
   "migration": "005_require_customer_phone.sql",
   "against": "fixtures",
-  "branch": "rehearse-005-require-customer-phone-mueda825",
-  "branchReadyMs": 5709,
-  "warmupMs": 138,
-  "migrationMs": 102,
+  "branch": "rehearse-005-require-customer-phone-mueeduep",
+  "branchReadyMs": 5678,
+  "connections": {
+    "migration": "direct",
+    "app": "pooled"
+  },
+  "warmupMs": 166,
+  "migrationMs": 121,
   "error": null,
   "traffic": {
-    "inserted": 23,
+    "inserted": 22,
     "writesDuring": 1,
     "readsDuring": 1,
-    "worstWriteMs": 33,
-    "worstReadMs": 32,
+    "worstWriteMs": 50,
+    "worstReadMs": 38,
     "failedOps": []
   },
   "lockWaits": {},
+  "lockSamples": {
+    "ok": 13,
+    "failed": 0
+  },
   "rowsBefore": {
     "customers": 50,
     "orders": 200,
@@ -22,7 +31,7 @@
   },
   "rowsAfter": {
     "customers": 50,
-    "orders": 223,
+    "orders": 222,
     "orders_archive": 0
   },
   "rowDeltas": {
@@ -41,7 +50,7 @@
     },
     "blocking": {
       "pass": true,
-      "reason": "worst write 33 ms, worst read 32 ms (limit 1000 ms)"
+      "reason": "worst write 50 ms, worst read 38 ms (limit 1000 ms)"
     },
     "rows": {
       "pass": true,
@@ -49,7 +58,7 @@
     }
   },
   "verdict": "PASS",
-  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-sparkling-resonance-b2ksukg3)\n@@ -27,9 +27,9 @@\n \n CREATE TABLE public.customers (\n     id bigint NOT NULL,\n     email text NOT NULL,\n-    phone text,\n+    phone text NOT NULL,\n     created_at timestamp with time zone DEFAULT now() NOT NULL\n );",
-  "cycleMs": 22974,
+  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-twilight-cherry-b2wda8z0)\n@@ -27,9 +27,9 @@\n \n CREATE TABLE public.customers (\n     id bigint NOT NULL,\n     email text NOT NULL,\n-    phone text,\n+    phone text NOT NULL,\n     created_at timestamp with time zone DEFAULT now() NOT NULL\n );",
+  "cycleMs": 21993,
   "deleteError": null
 }

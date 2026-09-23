@@ -1,20 +1,29 @@
 {
+  "id": "002_unique_customer_email.sql",
   "migration": "002_unique_customer_email.sql",
   "against": "production",
-  "branch": "rehearse-002-unique-customer-email-mueczkxh",
-  "branchReadyMs": 2271,
-  "warmupMs": 2098,
-  "migrationMs": 408,
-  "error": "could not create unique index \"customers_email_lower_key\" (Key (lower(email))=(user107599@example.com) is duplicated.)",
+  "branch": "rehearse-002-unique-customer-email-muee35xh",
+  "branchReadyMs": 2305,
+  "connections": {
+    "migration": "direct",
+    "app": "pooled"
+  },
+  "warmupMs": 2655,
+  "migrationMs": 383,
+  "error": "could not create unique index \"customers_email_lower_key\" (Key (lower(email))=(user129199@example.com) is duplicated.)",
   "traffic": {
     "inserted": 25,
     "writesDuring": 3,
     "readsDuring": 3,
-    "worstWriteMs": 49,
-    "worstReadMs": 48,
+    "worstWriteMs": 50,
+    "worstReadMs": 36,
     "failedOps": []
   },
   "lockWaits": {},
+  "lockSamples": {
+    "ok": 14,
+    "failed": 0
+  },
   "rowsBefore": {
     "customers": 500000,
     "orders": 4000000,
@@ -33,7 +42,7 @@
   "gates": {
     "runs": {
       "pass": false,
-      "reason": "could not create unique index \"customers_email_lower_key\" (Key (lower(email))=(user107599@example.com) is duplicated.)"
+      "reason": "could not create unique index \"customers_email_lower_key\" (Key (lower(email))=(user129199@example.com) is duplicated.)"
     },
     "app": {
       "pass": true,
@@ -41,7 +50,7 @@
     },
     "blocking": {
       "pass": true,
-      "reason": "worst write 49 ms, worst read 48 ms (limit 1000 ms)"
+      "reason": "worst write 50 ms, worst read 36 ms (limit 1000 ms)"
     },
     "rows": {
       "pass": true,
@@ -50,6 +59,6 @@
   },
   "verdict": "FAIL",
   "schemaDiff": "",
-  "cycleMs": 13952,
+  "cycleMs": 14192,
   "deleteError": null
 }

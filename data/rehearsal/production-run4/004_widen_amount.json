@@ -1,20 +1,32 @@
 {
+  "id": "004_widen_amount.sql",
   "migration": "004_widen_amount.sql",
   "against": "production",
-  "branch": "rehearse-004-widen-amount-muedf9jx",
-  "branchReadyMs": 2343,
-  "warmupMs": 2567,
-  "migrationMs": 13213,
+  "branch": "rehearse-004-widen-amount-mueeasil",
+  "branchReadyMs": 2406,
+  "connections": {
+    "migration": "direct",
+    "app": "pooled"
+  },
+  "warmupMs": 2064,
+  "migrationMs": 8337,
   "error": null,
   "traffic": {
-    "inserted": 22,
-    "writesDuring": 2,
+    "inserted": 23,
+    "writesDuring": 1,
     "readsDuring": 1,
-    "worstWriteMs": 13114,
-    "worstReadMs": 13147,
+    "worstWriteMs": 8290,
+    "worstReadMs": 8264,
     "failedOps": []
   },
-  "lockWaits": {},
+  "lockWaits": {
+    "relation: INSERT INTO orders (customer_id, amount_cents, status) VALUES ($1, $2,": 8018,
+    "relation: SELECT id, status FROM orders WHERE id = $1": 7986
+  },
+  "lockSamples": {
+    "ok": 47,
+    "failed": 0
+  },
   "rowsBefore": {
     "customers": 500000,
     "orders": 4000000,
@@ -22,7 +34,7 @@
   },
   "rowsAfter": {
     "customers": 500000,
-    "orders": 4000022,
+    "orders": 4000023,
     "orders_archive": 0
   },
   "rowDeltas": {
@@ -41,7 +53,7 @@
     },
     "blocking": {
       "pass": false,
-      "reason": "worst write 13114 ms, worst read 13147 ms (limit 1000 ms)"
+      "reason": "worst write 8290 ms, worst read 8264 ms (limit 1000 ms)"
     },
     "rows": {
       "pass": true,
@@ -49,7 +61,7 @@
     }
   },
   "verdict": "FAIL",
-  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-purple-hat-b2rgmptv)\n@@ -55,9 +55,9 @@\n \n CREATE TABLE public.orders (\n     id bigint NOT NULL,\n     customer_id bigint NOT NULL,\n-    amount_cents integer NOT NULL,\n+    amount_cents bigint NOT NULL,\n     status text NOT NULL,\n     created_at timestamp with time zone DEFAULT now() NOT NULL\n );",
-  "cycleMs": 37106,
+  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-calm-dew-b2qkwcen)\n@@ -55,9 +55,9 @@\n \n CREATE TABLE public.orders (\n     id bigint NOT NULL,\n     customer_id bigint NOT NULL,\n-    amount_cents integer NOT NULL,\n+    amount_cents bigint NOT NULL,\n     status text NOT NULL,\n     created_at timestamp with time zone DEFAULT now() NOT NULL\n );",
+  "cycleMs": 28319,
   "deleteError": null
 }

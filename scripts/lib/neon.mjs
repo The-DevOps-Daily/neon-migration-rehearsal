@@ -17,6 +17,7 @@ async function api(method, path, body) {
       Accept: 'application/json',
     },
     body: body ? JSON.stringify(body) : undefined,
+    signal: AbortSignal.timeout(60_000),
   });
   const text = await res.text();
   if (!res.ok) throw new Error(`Neon API ${method} ${path}: HTTP ${res.status} ${text.slice(0, 300)}`);
@@ -66,7 +67,8 @@ export async function createBranch({ name, parentId, schemaOnly = false, expires
     await waitForOperations(created.operations);
     const readyMs = Date.now() - started;
     const uri = await connectionUri(created.branch.id);
-    return { branch: created.branch, endpoint: created.endpoints?.[0], uri, readyMs, started };
+    const pooledUri = await connectionUri(created.branch.id, { pooled: true });
+    return { branch: created.branch, endpoint: created.endpoints?.[0], uri, pooledUri, readyMs, started };
   } catch (e) {
     // The branch exists but is not usable: remove it now rather than wait for its expiry.
     await deleteBranch(created.branch.id).catch(() => {});
@@ -74,11 +76,17 @@ export async function createBranch({ name, parentId, schemaOnly = false, expires
   }
 }
 
-export async function connectionUri(branchId) {
+/**
+ * Ask for `pooled` explicitly: without it this endpoint returned the pooled (PgBouncer,
+ * transaction mode) string. Migrations and anything that needs its own session (SET, a backend
+ * PID) take the direct one; the app traffic takes the pooled one, as most apps on Neon do.
+ */
+export async function connectionUri(branchId, { pooled = false } = {}) {
   const params = new URLSearchParams({
     branch_id: branchId,
     database_name: 'neondb',
     role_name: 'neondb_owner',
+    pooled: String(pooled),
   });
   const { uri } = await api('GET', `/projects/${project()}/connection_uri?${params}`);
   return uri;
@@ -91,11 +99,10 @@ export async function deleteBranch(branchId) {
 
 /** `neon branches schema-diff`: the schema change a migration makes, as Neon reports it. */
 export async function schemaDiff(baseBranch, compareBranch) {
+  // The locked neonctl from package-lock.json, not whatever npx would download.
   const { stdout } = await run(
-    'npx',
+    new URL('../../node_modules/.bin/neonctl', import.meta.url).pathname,
     [
-      '--yes',
-      'neonctl@6',
       'branches',
       'schema-diff',
       baseBranch,
@@ -106,7 +113,7 @@ export async function schemaDiff(baseBranch, compareBranch) {
       'neondb',
       '--no-color',
     ],
-    { env: { ...process.env, NEON_API_KEY: need('NEON_API_KEY') }, maxBuffer: 10 * 1024 * 1024 },
+    { env: { ...process.env, NEON_API_KEY: need('NEON_API_KEY') }, maxBuffer: 10 * 1024 * 1024, timeout: 120_000 },
   );
   return stdout.trim();
 }

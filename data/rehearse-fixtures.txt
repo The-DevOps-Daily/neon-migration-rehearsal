@@ -1,13 +1,13 @@
 
 001_add_order_source.sql on a schema-only branch with fixtures
-  branch rehearse-001-add-order-source-mued872g ready in 5.7s
+  branch rehearse-001-add-order-source-mueec11v ready in 5.8s
   PASS  ran in 0.1s
     ok   runs     completed
     ok   app      no app query failed
-    ok   blocking worst write 37 ms, worst read 36 ms (limit 1000 ms)
+    ok   blocking worst write 33 ms, worst read 33 ms (limit 1000 ms)
     ok   rows     no table lost rows
     | --- Database: neondb	(Branch: br-ancient-salad-b2vntgbd)
-    | +++ Database: neondb	(Branch: br-weathered-hall-b2a5if1b)
+    | +++ Database: neondb	(Branch: br-wild-base-b290vduj)
     | @@ -57,9 +57,10 @@
     |      id bigint NOT NULL,
     |      customer_id bigint NOT NULL,
@@ -22,14 +22,14 @@
     |  ALTER TABLE public.orders OWNER TO neondb_owner;
 
 002_unique_customer_email.sql on a schema-only branch with fixtures
-  branch rehearse-002-unique-customer-email-mued8pag ready in 5.7s
+  branch rehearse-002-unique-customer-email-mueechif ready in 5.7s
   PASS  ran in 0.1s
     ok   runs     completed
     ok   app      no app query failed
-    ok   blocking worst write 33 ms, worst read 33 ms (limit 1000 ms)
+    ok   blocking worst write 35 ms, worst read 36 ms (limit 1000 ms)
     ok   rows     no table lost rows
     | --- Database: neondb	(Branch: br-ancient-salad-b2vntgbd)
-    | +++ Database: neondb	(Branch: br-tiny-rice-b2tvwdh2)
+    | +++ Database: neondb	(Branch: br-hidden-darkness-b26se1uu)
     | @@ -117,8 +117,15 @@
     |      ADD CONSTRAINT orders_pkey PRIMARY KEY (id);
     |  
@@ -48,14 +48,14 @@
     |  CREATE INDEX orders_customer_id_idx ON public.orders USING btree (customer_id);
 
 003_index_orders_created_at.sql on a schema-only branch with fixtures
-  branch rehearse-003-index-orders-created-at-mued978x ready in 5.6s
+  branch rehearse-003-index-orders-created-at-mueecylr ready in 5.7s
   PASS  ran in 0.1s
     ok   runs     completed
     ok   app      no app query failed
-    ok   blocking worst write 39 ms, worst read 40 ms (limit 1000 ms)
+    ok   blocking worst write 40 ms, worst read 38 ms (limit 1000 ms)
     ok   rows     no table lost rows
     | --- Database: neondb	(Branch: br-ancient-salad-b2vntgbd)
-    | +++ Database: neondb	(Branch: br-shy-lake-b2n8tajq)
+    | +++ Database: neondb	(Branch: br-ancient-block-b2k4uo6n)
     | @@ -117,8 +117,15 @@
     |      ADD CONSTRAINT orders_pkey PRIMARY KEY (id);
     |  
@@ -74,14 +74,14 @@
     |  CREATE INDEX orders_customer_id_idx ON public.orders USING btree (customer_id);
 
 004_widen_amount.sql on a schema-only branch with fixtures
-  branch rehearse-004-widen-amount-mued9p1s ready in 5.6s
+  branch rehearse-004-widen-amount-mueedef5 ready in 5.0s
   PASS  ran in 0.1s
     ok   runs     completed
     ok   app      no app query failed
-    ok   blocking worst write 36 ms, worst read 35 ms (limit 1000 ms)
+    ok   blocking worst write 32 ms, worst read 31 ms (limit 1000 ms)
     ok   rows     no table lost rows
     | --- Database: neondb	(Branch: br-ancient-salad-b2vntgbd)
-    | +++ Database: neondb	(Branch: br-young-wind-b2i4n6wr)
+    | +++ Database: neondb	(Branch: br-wispy-unit-b25epqyz)
     | @@ -55,9 +55,9 @@
     |  
     |  CREATE TABLE public.orders (
@@ -94,14 +94,14 @@
     |  );
 
 005_require_customer_phone.sql on a schema-only branch with fixtures
-  branch rehearse-005-require-customer-phone-mueda825 ready in 5.7s
+  branch rehearse-005-require-customer-phone-mueeduep ready in 5.7s
   PASS  ran in 0.1s
     ok   runs     completed
     ok   app      no app query failed
-    ok   blocking worst write 33 ms, worst read 32 ms (limit 1000 ms)
+    ok   blocking worst write 50 ms, worst read 38 ms (limit 1000 ms)
     ok   rows     no table lost rows
     | --- Database: neondb	(Branch: br-ancient-salad-b2vntgbd)
-    | +++ Database: neondb	(Branch: br-sparkling-resonance-b2ksukg3)
+    | +++ Database: neondb	(Branch: br-twilight-cherry-b2wda8z0)
     | @@ -27,9 +27,9 @@
     |  
     |  CREATE TABLE public.customers (
@@ -113,13 +113,13 @@
     |  );
 
 006_archive_refunded_orders.sql on a schema-only branch with fixtures
-  branch rehearse-006-archive-refunded-orders-muedapsc ready in 5.6s
+  branch rehearse-006-archive-refunded-orders-mueeebdn ready in 5.7s
   PASS  ran in 0.1s
     ok   runs     completed
     ok   app      no app query failed
-    ok   blocking worst write 32 ms, worst read 32 ms (limit 1000 ms)
+    ok   blocking worst write 40 ms, worst read 35 ms (limit 1000 ms)
     ok   rows     0 rows moved orders -> orders_archive (counts match)
     | --- Database: neondb	(Branch: br-ancient-salad-b2vntgbd)
-    | +++ Database: neondb	(Branch: br-soft-river-b21tgfz1)
+    | +++ Database: neondb	(Branch: br-still-hall-b28adz7f)
 
 6 of 6 passed on fixtures

@@ -1,0 +1,20 @@
+{
+  "fetchedAt": "2026-09-23",
+  "source": "GET /projects/{id} and /projects/{id}/endpoints",
+  "project": {
+    "id": "polished-sea-98694330",
+    "name": "migration-rehearsal",
+    "region_id": "aws-eu-central-1",
+    "pg_version": 18,
+    "history_retention_seconds": 86400
+  },
+  "endpoints": [
+    {
+      "branch_id": "br-ancient-salad-b2vntgbd",
+      "type": "read_write",
+      "autoscaling_limit_min_cu": 1,
+      "autoscaling_limit_max_cu": 1,
+      "suspend_timeout_seconds": 300
+    }
+  ]
+}

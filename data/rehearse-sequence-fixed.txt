@@ -1,15 +1,15 @@
 
 2 migrations in order on one branch of production
-  branch rehearse-sequence-muedcb74 ready in 2.4s
+  branch rehearse-sequence-mueefrja ready in 2.5s
 
 003_index_orders_created_at.sql
   PASS  ran in 2.4s
     ok   runs     completed
     ok   app      no app query failed
-    ok   blocking worst write 77 ms, worst read 45 ms (limit 1000 ms)
+    ok   blocking worst write 88 ms, worst read 50 ms (limit 1000 ms)
     ok   rows     no table lost rows
     | --- Database: neondb	(Branch: br-ancient-salad-b2vntgbd)
-    | +++ Database: neondb	(Branch: br-wispy-surf-b2swwh35)
+    | +++ Database: neondb	(Branch: br-orange-bread-b2hu6bdq)
     | @@ -117,8 +117,15 @@
     |      ADD CONSTRAINT orders_pkey PRIMARY KEY (id);
     |  
@@ -28,13 +28,13 @@
     |  CREATE INDEX orders_customer_id_idx ON public.orders USING btree (customer_id);
 
 006_archive_refunded_orders.sql
-  PASS  ran in 3.1s
+  PASS  ran in 3.2s
     ok   runs     completed
     ok   app      no app query failed
-    ok   blocking worst write 131 ms, worst read 46 ms (limit 1000 ms)
-    ok   rows     533316 rows moved orders -> orders_archive (counts match)
+    ok   blocking worst write 78 ms, worst read 47 ms (limit 1000 ms)
+    ok   rows     533333 rows moved orders -> orders_archive (counts match)
     | --- Database: neondb	(Branch: br-ancient-salad-b2vntgbd)
-    | +++ Database: neondb	(Branch: br-wispy-surf-b2swwh35)
+    | +++ Database: neondb	(Branch: br-orange-bread-b2hu6bdq)
     | @@ -117,8 +117,15 @@
     |      ADD CONSTRAINT orders_pkey PRIMARY KEY (id);
     |  

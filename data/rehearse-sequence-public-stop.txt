@@ -1,0 +1,33 @@
+
+3 migrations in order on one branch of production
+  branch rehearse-sequence-mueeglq9 ready in 2.5s
+
+001_add_order_source.sql
+  PASS  ran in 0.1s
+    ok   runs     completed
+    ok   app      no app query failed
+    ok   blocking worst write 36 ms, worst read 33 ms (limit 1000 ms)
+    ok   rows     no table lost rows
+    | --- Database: neondb	(Branch: br-ancient-salad-b2vntgbd)
+    | +++ Database: neondb	(Branch: br-flat-glitter-b2p3ab7p)
+    | @@ -57,9 +57,10 @@
+    |      id bigint NOT NULL,
+    |      customer_id bigint NOT NULL,
+    |      amount_cents integer NOT NULL,
+    |      status text NOT NULL,
+    | -    created_at timestamp with time zone DEFAULT now() NOT NULL
+    | +    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    | +    source text DEFAULT 'web'::text NOT NULL
+    |  );
+    |  
+    |  
+    |  ALTER TABLE public.orders OWNER TO neondb_owner;
+
+002_unique_customer_email.sql
+  FAIL  ran in 0.3s
+    FAIL runs     SQLSTATE 23505 unique_violation
+    ok   app      no app query failed
+    ok   blocking worst write 50 ms, worst read 38 ms (limit 1000 ms)
+    ok   rows     no table lost rows
+
+1 of 3 passed on production; 1 not run after an error

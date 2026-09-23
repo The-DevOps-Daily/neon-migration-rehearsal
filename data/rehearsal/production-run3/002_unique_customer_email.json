@@ -1,20 +1,29 @@
 {
+  "id": "002_unique_customer_email.sql",
   "migration": "002_unique_customer_email.sql",
   "against": "production",
-  "branch": "rehearse-002-unique-customer-email-mued5kj7",
-  "branchReadyMs": 2464,
-  "warmupMs": 2191,
-  "migrationMs": 358,
-  "error": "could not create unique index \"customers_email_lower_key\" (Key (lower(email))=(user11999@example.com) is duplicated.)",
+  "branch": "rehearse-002-unique-customer-email-muee8jgd",
+  "branchReadyMs": 3091,
+  "connections": {
+    "migration": "direct",
+    "app": "pooled"
+  },
+  "warmupMs": 2111,
+  "migrationMs": 383,
+  "error": "could not create unique index \"customers_email_lower_key\" (Key (lower(email))=(user122399@example.com) is duplicated.)",
   "traffic": {
-    "inserted": 25,
+    "inserted": 23,
     "writesDuring": 3,
     "readsDuring": 3,
-    "worstWriteMs": 44,
-    "worstReadMs": 41,
+    "worstWriteMs": 66,
+    "worstReadMs": 52,
     "failedOps": []
   },
   "lockWaits": {},
+  "lockSamples": {
+    "ok": 14,
+    "failed": 0
+  },
   "rowsBefore": {
     "customers": 500000,
     "orders": 4000000,
@@ -22,7 +31,7 @@
   },
   "rowsAfter": {
     "customers": 500000,
-    "orders": 4000025,
+    "orders": 4000023,
     "orders_archive": 0
   },
   "rowDeltas": {
@@ -33,7 +42,7 @@
   "gates": {
     "runs": {
       "pass": false,
-      "reason": "could not create unique index \"customers_email_lower_key\" (Key (lower(email))=(user11999@example.com) is duplicated.)"
+      "reason": "could not create unique index \"customers_email_lower_key\" (Key (lower(email))=(user122399@example.com) is duplicated.)"
     },
     "app": {
       "pass": true,
@@ -41,7 +50,7 @@
     },
     "blocking": {
       "pass": true,
-      "reason": "worst write 44 ms, worst read 41 ms (limit 1000 ms)"
+      "reason": "worst write 66 ms, worst read 52 ms (limit 1000 ms)"
     },
     "rows": {
       "pass": true,
@@ -50,6 +59,6 @@
   },
   "verdict": "FAIL",
   "schemaDiff": "",
-  "cycleMs": 13887,
+  "cycleMs": 15355,
   "deleteError": null
 }

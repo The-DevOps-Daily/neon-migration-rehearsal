@@ -1,20 +1,31 @@
 {
+  "id": "003_index_orders_created_at.sql",
   "migration": "003_index_orders_created_at.sql",
   "against": "production",
-  "branch": "rehearse-003-index-orders-created-at-mueczvp1",
-  "branchReadyMs": 2270,
-  "warmupMs": 2000,
-  "migrationMs": 3305,
+  "branch": "rehearse-003-index-orders-created-at-muee3gvp",
+  "branchReadyMs": 2267,
+  "connections": {
+    "migration": "direct",
+    "app": "pooled"
+  },
+  "warmupMs": 2122,
+  "migrationMs": 2343,
   "error": null,
   "traffic": {
-    "inserted": 22,
-    "writesDuring": 4,
+    "inserted": 24,
+    "writesDuring": 2,
     "readsDuring": 17,
-    "worstWriteMs": 2518,
-    "worstReadMs": 544,
+    "worstWriteMs": 2186,
+    "worstReadMs": 49,
     "failedOps": []
   },
-  "lockWaits": {},
+  "lockWaits": {
+    "relation: INSERT INTO orders (customer_id, amount_cents, status) VALUES ($1, $2,": 1937
+  },
+  "lockSamples": {
+    "ok": 23,
+    "failed": 0
+  },
   "rowsBefore": {
     "customers": 500000,
     "orders": 4000000,
@@ -22,7 +33,7 @@
   },
   "rowsAfter": {
     "customers": 500000,
-    "orders": 4000022,
+    "orders": 4000024,
     "orders_archive": 0
   },
   "rowDeltas": {
@@ -41,7 +52,7 @@
     },
     "blocking": {
       "pass": false,
-      "reason": "worst write 2518 ms, worst read 544 ms (limit 1000 ms)"
+      "reason": "worst write 2186 ms, worst read 49 ms (limit 1000 ms)"
     },
     "rows": {
       "pass": true,
@@ -49,7 +60,7 @@
     }
   },
   "verdict": "FAIL",
-  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-autumn-lake-b25e2xcs)\n@@ -117,8 +117,15 @@\n     ADD CONSTRAINT orders_pkey PRIMARY KEY (id);\n \n \n --\n+-- Name: orders_created_at_idx; Type: INDEX; Schema: public; Owner: neondb_owner\n+--\n+\n+CREATE INDEX orders_created_at_idx ON public.orders USING btree (created_at);\n+\n+\n+--\n -- Name: orders_customer_id_idx; Type: INDEX; Schema: public; Owner: neondb_owner\n --\n \n CREATE INDEX orders_customer_id_idx ON public.orders USING btree (customer_id);",
-  "cycleMs": 32538,
+  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-shiny-sky-b2rrypd2)\n@@ -117,8 +117,15 @@\n     ADD CONSTRAINT orders_pkey PRIMARY KEY (id);\n \n \n --\n+-- Name: orders_created_at_idx; Type: INDEX; Schema: public; Owner: neondb_owner\n+--\n+\n+CREATE INDEX orders_created_at_idx ON public.orders USING btree (created_at);\n+\n+\n+--\n -- Name: orders_customer_id_idx; Type: INDEX; Schema: public; Owner: neondb_owner\n --\n \n CREATE INDEX orders_customer_id_idx ON public.orders USING btree (customer_id);",
+  "cycleMs": 22886,
   "deleteError": null
 }
