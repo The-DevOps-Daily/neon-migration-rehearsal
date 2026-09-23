@@ -1,0 +1,17 @@
+{
+  "name": "neon-migration-rehearsal",
+  "description": "Rehearse Postgres migrations on a Neon branch of production",
+  "scripts": {
+    "seed": "node scripts/seed-production.mjs",
+    "rehearse": "node scripts/rehearse.mjs"
+  },
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "pg": "^8.23.0"
+  },
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,13 @@
+drop old tables                              0.0s
+create schema                                0.1s
+insert 500,000 customers                     2.1s  (500,000 rows)
+insert 4,000,000 orders                      64.6s  (4,000,000 rows)
+analyze                                      0.5s
+{
+  customers: '500000',
+  orders: '4000000',
+  duplicate_emails: '1250',
+  null_phones: '15000',
+  orders_size: '395 MB',
+  database_size: '453 MB'
+}

@@ -1,0 +1,52 @@
+{
+  "migration": "004_widen_amount.sql",
+  "dir": "migrations",
+  "against": "production",
+  "branch": "rehearse-004-widen-amount-muebb8x8",
+  "branchReadyMs": 2227,
+  "warmupMs": 1891,
+  "migrationMs": 8984,
+  "error": null,
+  "traffic": {
+    "writesDuring": 2,
+    "readsDuring": 2,
+    "worstWriteMs": 8814,
+    "worstReadMs": 8812,
+    "failedOps": []
+  },
+  "lockWaits": {
+    "relation: INSERT INTO orders (customer_id, amount_cents, status) VALUES ($1, $2,": 8660,
+    "relation: SELECT id, status FROM orders WHERE id = $1": 8660
+  },
+  "rowsBefore": {
+    "customers": 500000,
+    "orders": 4000000,
+    "orders_archive": 0
+  },
+  "rowsAfter": {
+    "customers": 500000,
+    "orders": 4000022,
+    "orders_archive": 0
+  },
+  "rowDeltas": {
+    "customers": 0,
+    "orders": 0,
+    "orders_archive": 0
+  },
+  "gates": {
+    "runs": {
+      "pass": true,
+      "reason": "completed"
+    },
+    "blocking": {
+      "pass": false,
+      "reason": "worst write 8814 ms, worst read 8812 ms (limit 1000 ms)"
+    },
+    "rows": {
+      "pass": true,
+      "reason": "no table lost rows"
+    }
+  },
+  "verdict": "FAIL",
+  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-steep-hat-b2hkgtab)\n@@ -55,9 +55,9 @@\n \n CREATE TABLE public.orders (\n     id bigint NOT NULL,\n     customer_id bigint NOT NULL,\n-    amount_cents integer NOT NULL,\n+    amount_cents bigint NOT NULL,\n     status text NOT NULL,\n     created_at timestamp with time zone DEFAULT now() NOT NULL\n );"
+}

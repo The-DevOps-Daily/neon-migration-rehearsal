@@ -1,0 +1,49 @@
+{
+  "migration": "006_archive_refunded_orders.sql",
+  "dir": "migrations",
+  "against": "production",
+  "branch": "rehearse-006-archive-refunded-orders-mueb9aix",
+  "branchReadyMs": 2958,
+  "warmupMs": 1902,
+  "migrationMs": 4921,
+  "error": null,
+  "traffic": {
+    "writesDuring": 31,
+    "readsDuring": 35,
+    "worstWriteMs": 90,
+    "worstReadMs": 50,
+    "failedOps": []
+  },
+  "lockWaits": {},
+  "rowsBefore": {
+    "customers": 500000,
+    "orders": 4000000,
+    "orders_archive": 0
+  },
+  "rowsAfter": {
+    "customers": 500000,
+    "orders": 1333350,
+    "orders_archive": 533293
+  },
+  "rowDeltas": {
+    "customers": 0,
+    "orders": -2666701,
+    "orders_archive": 533293
+  },
+  "gates": {
+    "runs": {
+      "pass": true,
+      "reason": "completed"
+    },
+    "blocking": {
+      "pass": true,
+      "reason": "worst write 90 ms, worst read 50 ms (limit 1000 ms)"
+    },
+    "rows": {
+      "pass": false,
+      "reason": "orders lost 2666701 rows but orders_archive gained 533293: 2133408 rows gone"
+    }
+  },
+  "verdict": "FAIL",
+  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-sweet-butterfly-b21pfxgw)"
+}

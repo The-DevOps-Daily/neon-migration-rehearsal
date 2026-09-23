@@ -1,0 +1,49 @@
+{
+  "migration": "002_unique_customer_email.sql",
+  "dir": "migrations",
+  "against": "fixtures",
+  "branch": "rehearse-002-unique-customer-email-muebg8hx",
+  "branchReadyMs": 5102,
+  "warmupMs": 149,
+  "migrationMs": 106,
+  "error": null,
+  "traffic": {
+    "writesDuring": 1,
+    "readsDuring": 1,
+    "worstWriteMs": 36,
+    "worstReadMs": 40,
+    "failedOps": []
+  },
+  "lockWaits": {},
+  "rowsBefore": {
+    "customers": 50,
+    "orders": 200,
+    "orders_archive": 0
+  },
+  "rowsAfter": {
+    "customers": 50,
+    "orders": 223,
+    "orders_archive": 0
+  },
+  "rowDeltas": {
+    "customers": 0,
+    "orders": 0,
+    "orders_archive": 0
+  },
+  "gates": {
+    "runs": {
+      "pass": true,
+      "reason": "completed"
+    },
+    "blocking": {
+      "pass": true,
+      "reason": "worst write 36 ms, worst read 40 ms (limit 1000 ms)"
+    },
+    "rows": {
+      "pass": true,
+      "reason": "no table lost rows"
+    }
+  },
+  "verdict": "PASS",
+  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-polished-forest-b2pz9s7x)\n@@ -117,8 +117,15 @@\n     ADD CONSTRAINT orders_pkey PRIMARY KEY (id);\n \n \n --\n+-- Name: customers_email_lower_key; Type: INDEX; Schema: public; Owner: neondb_owner\n+--\n+\n+CREATE UNIQUE INDEX customers_email_lower_key ON public.customers USING btree (lower(email));\n+\n+\n+--\n -- Name: orders_customer_id_idx; Type: INDEX; Schema: public; Owner: neondb_owner\n --\n \n CREATE INDEX orders_customer_id_idx ON public.orders USING btree (customer_id);"
+}

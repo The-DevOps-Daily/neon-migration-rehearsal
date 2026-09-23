@@ -1,0 +1,55 @@
+{
+  "migration": "004_widen_amount.sql",
+  "restorePoint": "2026-09-23T16:31:37.405Z",
+  "warmupMs": 448,
+  "migrationMs": 14870,
+  "error": null,
+  "traffic": {
+    "writesDuring": 2,
+    "readsDuring": 2,
+    "worstWriteMs": 14723,
+    "worstReadMs": 14730,
+    "failedOps": []
+  },
+  "lockWaits": {
+    "relation: SELECT id, status FROM orders WHERE id = $1": 14574,
+    "relation: INSERT INTO orders (customer_id, amount_cents, status) VALUES ($1, $2,": 14562
+  },
+  "rowsBefore": {
+    "customers": 500000,
+    "orders": 4000000,
+    "orders_archive": 0
+  },
+  "rowsAfter": {
+    "customers": 500000,
+    "orders": 4000021,
+    "orders_archive": 0
+  },
+  "rowDeltas": {
+    "customers": 0,
+    "orders": 0,
+    "orders_archive": 0
+  },
+  "gates": {
+    "runs": {
+      "pass": true,
+      "reason": "completed"
+    },
+    "blocking": {
+      "pass": false,
+      "reason": "worst write 14723 ms, worst read 14730 ms (limit 1000 ms)"
+    },
+    "rows": {
+      "pass": true,
+      "reason": "no table lost rows"
+    }
+  },
+  "verdict": "FAIL",
+  "restoreMs": 9298,
+  "countsAfterRestore": {
+    "customers": 500000,
+    "orders": 4000000,
+    "orders_archive": 0
+  },
+  "restoredCleanly": true
+}

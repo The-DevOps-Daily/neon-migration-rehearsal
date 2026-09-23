@@ -1,0 +1,61 @@
+name: Rehearse migrations
+
+on:
+  pull_request:
+    paths:
+      - 'migrations/**'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: rehearse-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  rehearse:
+    # Pull requests from forks get no secrets, so only rehearse branches of this repository.
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+
+      - run: npm ci
+
+      - name: Find the migrations this pull request adds or changes
+        id: changed
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          files=$(git diff --name-only --diff-filter=AM "origin/$BASE_REF...HEAD" -- 'migrations/*.sql' \
+            | grep -E '^migrations/[A-Za-z0-9_.-]+\.sql$' | tr '\n' ' ')
+          echo "files=$files" >> "$GITHUB_OUTPUT"
+
+      - name: Rehearse on a Neon branch of production
+        if: steps.changed.outputs.files != ''
+        env:
+          # A project-scoped key: it can branch this project and nothing else.
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+          NEON_PROJECT_ID: ${{ vars.NEON_PROJECT_ID }}
+          PRODUCTION_BRANCH: main
+          FILES: ${{ steps.changed.outputs.files }}
+        run: node scripts/rehearse.mjs $FILES --markdown rehearsal.md
+
+      - name: Post the result on the pull request
+        if: always() && steps.changed.outputs.files != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          test -f rehearsal.md || echo "The rehearsal did not finish. See the workflow log." > rehearsal.md
+          gh pr comment "$PR" --body-file rehearsal.md --edit-last 2>/dev/null \
+            || gh pr comment "$PR" --body-file rehearsal.md

@@ -1,0 +1,9 @@
+
+004_widen_amount.sql on production itself
+  FAIL  ran in 14.9s
+    ok   runs     completed
+    FAIL blocking worst write 14723 ms, worst read 14730 ms (limit 1000 ms)
+    ok   rows     no table lost rows
+    lock wait 14574 ms  relation: SELECT id, status FROM orders WHERE id = $1
+    lock wait 14562 ms  relation: INSERT INTO orders (customer_id, amount_cents, status) VALUES ($1, $2,
+  restored production to 2026-09-23T16:31:37.405Z in 9.3s; schema and row counts match the restore point

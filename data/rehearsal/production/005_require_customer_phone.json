@@ -1,0 +1,49 @@
+{
+  "migration": "005_require_customer_phone.sql",
+  "dir": "migrations",
+  "against": "production",
+  "branch": "rehearse-005-require-customer-phone-mueb90me",
+  "branchReadyMs": 2311,
+  "warmupMs": 1910,
+  "migrationMs": 115,
+  "error": "column \"phone\" of relation \"customers\" contains null values",
+  "traffic": {
+    "writesDuring": 1,
+    "readsDuring": 1,
+    "worstWriteMs": 36,
+    "worstReadMs": 46,
+    "failedOps": []
+  },
+  "lockWaits": {},
+  "rowsBefore": {
+    "customers": 500000,
+    "orders": 4000000,
+    "orders_archive": 0
+  },
+  "rowsAfter": {
+    "customers": 500000,
+    "orders": 4000020,
+    "orders_archive": 0
+  },
+  "rowDeltas": {
+    "customers": 0,
+    "orders": 0,
+    "orders_archive": 0
+  },
+  "gates": {
+    "runs": {
+      "pass": false,
+      "reason": "column \"phone\" of relation \"customers\" contains null values"
+    },
+    "blocking": {
+      "pass": true,
+      "reason": "worst write 36 ms, worst read 46 ms (limit 1000 ms)"
+    },
+    "rows": {
+      "pass": true,
+      "reason": "no table lost rows"
+    }
+  },
+  "verdict": "FAIL",
+  "schemaDiff": ""
+}

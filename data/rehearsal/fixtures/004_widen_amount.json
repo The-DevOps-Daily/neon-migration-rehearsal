@@ -1,0 +1,49 @@
+{
+  "migration": "004_widen_amount.sql",
+  "dir": "migrations",
+  "against": "fixtures",
+  "branch": "rehearse-004-widen-amount-muebh8mh",
+  "branchReadyMs": 5562,
+  "warmupMs": 169,
+  "migrationMs": 125,
+  "error": null,
+  "traffic": {
+    "writesDuring": 1,
+    "readsDuring": 1,
+    "worstWriteMs": 33,
+    "worstReadMs": 36,
+    "failedOps": []
+  },
+  "lockWaits": {},
+  "rowsBefore": {
+    "customers": 50,
+    "orders": 200,
+    "orders_archive": 0
+  },
+  "rowsAfter": {
+    "customers": 50,
+    "orders": 223,
+    "orders_archive": 0
+  },
+  "rowDeltas": {
+    "customers": 0,
+    "orders": 0,
+    "orders_archive": 0
+  },
+  "gates": {
+    "runs": {
+      "pass": true,
+      "reason": "completed"
+    },
+    "blocking": {
+      "pass": true,
+      "reason": "worst write 33 ms, worst read 36 ms (limit 1000 ms)"
+    },
+    "rows": {
+      "pass": true,
+      "reason": "no table lost rows"
+    }
+  },
+  "verdict": "PASS",
+  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-red-moon-b2nvgq1h)\n@@ -55,9 +55,9 @@\n \n CREATE TABLE public.orders (\n     id bigint NOT NULL,\n     customer_id bigint NOT NULL,\n-    amount_cents integer NOT NULL,\n+    amount_cents bigint NOT NULL,\n     status text NOT NULL,\n     created_at timestamp with time zone DEFAULT now() NOT NULL\n );"
+}

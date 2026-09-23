@@ -1,0 +1,17 @@
+
+003_index_orders_created_at.sql on production itself
+  FAIL  ran in 2.4s
+    ok   runs     completed
+    FAIL blocking worst write 2239 ms, worst read 52 ms (limit 1000 ms)
+    ok   rows     no table lost rows
+    lock wait 1967 ms  relation: INSERT INTO orders (customer_id, amount_cents, status) VALUES ($1, $2,
+  restored production to 2026-09-23T16:30:14.515Z in 8.1s; schema and row counts match the restore point
+
+004_widen_amount.sql on production itself
+  FAIL  ran in 10.8s
+    ok   runs     completed
+    FAIL blocking worst write 10651 ms, worst read 10652 ms (limit 1000 ms)
+    ok   rows     no table lost rows
+    lock wait 10581 ms  relation: SELECT id, status FROM orders WHERE id = $1
+    lock wait 10574 ms  relation: INSERT INTO orders (customer_id, amount_cents, status) VALUES ($1, $2,
+  restored production to 2026-09-23T16:30:40.958Z in 9.1s; schema and row counts match the restore point

@@ -1,0 +1,49 @@
+{
+  "migration": "006_archive_refunded_orders.sql",
+  "dir": "migrations",
+  "against": "production",
+  "branch": "rehearse-006-archive-refunded-orders-muebf41s",
+  "branchReadyMs": 2288,
+  "warmupMs": 2187,
+  "migrationMs": 4869,
+  "error": null,
+  "traffic": {
+    "writesDuring": 31,
+    "readsDuring": 36,
+    "worstWriteMs": 121,
+    "worstReadMs": 61,
+    "failedOps": []
+  },
+  "lockWaits": {},
+  "rowsBefore": {
+    "customers": 500000,
+    "orders": 4000000,
+    "orders_archive": 0
+  },
+  "rowsAfter": {
+    "customers": 500000,
+    "orders": 1333338,
+    "orders_archive": 533296
+  },
+  "rowDeltas": {
+    "customers": 0,
+    "orders": -2666713,
+    "orders_archive": 533296
+  },
+  "gates": {
+    "runs": {
+      "pass": true,
+      "reason": "completed"
+    },
+    "blocking": {
+      "pass": true,
+      "reason": "worst write 121 ms, worst read 61 ms (limit 1000 ms)"
+    },
+    "rows": {
+      "pass": false,
+      "reason": "orders lost 2666713 rows but orders_archive gained 533296: 2133417 rows gone"
+    }
+  },
+  "verdict": "FAIL",
+  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-curly-king-b22uhrit)"
+}
