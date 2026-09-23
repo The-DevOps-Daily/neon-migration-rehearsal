@@ -13,7 +13,7 @@ Companion to the DevOps Daily article
 
 ## Run it
 
-You need Node 20+, a Neon project, and an API key that can create branches in it.
+You need Node 20.19 or newer, a Neon project, and an API key that can create branches in it.
 The demo project's settings are in `data/neon-project-settings.json` (Postgres 18,
 1 CU fixed).
 
@@ -53,12 +53,14 @@ as Neon advises for schema changes. The app traffic uses the **pooled** one
 (PgBouncer in transaction mode), as most apps on Neon do, and sets
 `application_name = rehearsal-app`, which the pooler passes on. The sampler finds
 app queries by that name, not by backend PID: through the pooler a client does not
-keep one backend, and even on a direct connection the PID the driver reports
-(`client.processID`) is not `pg_backend_pid()`.
+keep one backend, and on Neon, even on a direct connection, the PID node-postgres
+reports (`client.processID`) was not `pg_backend_pid()`.
 
 Ask the `connection_uri` API for `pooled=false` explicitly. Without the parameter
 it returned the pooled string, which is how the second version of this harness
 ended up running migrations through the pooler (see `data/superseded/v2-pooled/`).
+`scripts/check-connection-strings.mjs` shows both on a throwaway branch
+(`data/check-connection-strings.txt`).
 
 ## Results
 
@@ -83,8 +85,10 @@ sequence on one branch.
 `scripts/check-on-production.mjs` runs a migration on production itself with the
 same traffic and gates, then undoes it with Neon's point-in-time restore
 (`data/on-production/`, `data/check-on-production.txt`). The restore runs even if
-the measurement fails, and if the schema or row counts do not match the restore
-point afterwards, the pre-restore state is kept as a branch. `003` blocked writes
+the measurement fails. Afterwards it compares column names, base types (without
+length or precision), nullability and defaults, constraints, index definitions
+and row counts with the restore point; if they differ, the pre-restore state is
+kept as a branch and the script stops. `003` blocked writes
 for 2.2 s on production; `004` blocked for 8.2 to 8.5 s in three runs. The branch
 and production ranges overlap, in a small sample: a rehearsal shows the size of
 the stall, not a forecast of the exact seconds.
@@ -96,9 +100,10 @@ above comes from the current version.
 
 ## In CI
 
-`.github/workflows/rehearse-migrations.yml` rehearses the migrations a pull
-request adds or changes, in order on one branch, and comments the gate table on
-the pull request.
+`.github/workflows/rehearse-migrations.yml` rehearses the `.sql` files a pull
+request adds, changes or renames directly in `migrations/`, in order on one
+branch, and comments the gate table on the pull request. Files in subfolders,
+like `migrations/fixed/`, are listed in the log as not rehearsed.
 
 - The rehearsal code and its dependencies, including the pinned Neon CLI, come
   from the base branch; only the pull request's migration SQL is used. `npm ci`
@@ -115,7 +120,9 @@ the pull request.
   string. Treat it as a production secret.
 - On GitHub Actions (`--public`) errors are reported as SQLSTATE codes only,
   because Postgres messages and DETAIL can quote row values. The schema diff is
-  still shown.
+  still shown: only SQL written to copy data into the schema could put row values
+  there, which is one more reason to rehearse only pull requests from people you
+  would trust with the data, and to read the SQL before approving.
 - Every branch is created with an expiry time, so a cancelled run cannot leave
   branches behind.
 
@@ -124,6 +131,7 @@ the pull request.
 - `scripts/seed-production.mjs` builds the production data with `generate_series`
 - `scripts/rehearse.mjs` the runner; `--against fixtures` uses schema-only branches, `--sequence` one branch
 - `scripts/check-on-production.mjs` the same run on production, then a restore
+- `scripts/check-connection-strings.mjs` what `connection_uri` returns with and without `pooled`
 - `scripts/lib/harness.mjs` traffic, lock sampling and gates
 - `scripts/lib/neon.mjs` the Neon API calls (branch, connection strings, restore, delete) and `neonctl branches schema-diff` from the locked `neonctl`
 - `migrations/` six realistic migrations; `migrations/fixed/` two fixes

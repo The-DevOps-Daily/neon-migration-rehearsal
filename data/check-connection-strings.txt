@@ -1,0 +1,4 @@
+pooled not given:  pooler host = true
+pooled=false:      pooler host = false
+pooled=true:       pooler host = true
+direct connection: driver processID 1850851300, pg_backend_pid() 602

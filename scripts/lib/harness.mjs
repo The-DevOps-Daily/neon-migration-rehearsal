@@ -227,20 +227,21 @@ export async function runWithTraffic(
         pass: appErrors.length === 0,
         reason: appErrors.length ? `${appErrors.length} app queries failed, first: ${appErrors[0]}` : 'no app query failed',
       },
-      // Without a read and a write overlapping the migration there is nothing to judge, unless the
-      // migration itself was shorter than the limit (then nothing could have waited that long).
-      blocking: covered
-        ? {
-            pass: worstWrite < stallMs && worstRead < stallMs,
-            reason: `worst write ${worstWrite} ms, worst read ${worstRead} ms (limit ${stallMs} ms)`,
-          }
-        : {
-            pass: finished - started < stallMs,
-            reason:
-              finished - started < stallMs
-                ? `ran for ${finished - started} ms, under the ${stallMs} ms limit, before app traffic overlapped it`
-                : `not enough app traffic overlapped the ${finished - started} ms migration to judge`,
-          },
+      // An observed wait over the limit always fails. Without both a read and a write overlapping
+      // the migration there is too little to judge, unless the migration itself was shorter than
+      // the limit, so nothing could have waited on it that long.
+      blocking:
+        worstWrite >= stallMs || worstRead >= stallMs || covered || finished - started < stallMs
+          ? {
+              pass: worstWrite < stallMs && worstRead < stallMs,
+              reason: `worst write ${worstWrite} ms, worst read ${worstRead} ms (limit ${stallMs} ms)${
+                covered ? '' : `; the ${finished - started} ms migration did not overlap both a read and a write`
+              }`,
+            }
+          : {
+              pass: false,
+              reason: `not enough app traffic overlapped the ${finished - started} ms migration to judge`,
+            },
       rows: rowsGate(deltas, meta.moves),
     };
     return {

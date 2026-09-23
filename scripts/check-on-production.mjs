@@ -7,9 +7,11 @@
 // Only for this demo project: it changes production for a few seconds before restoring it.
 // The restore point is written to data/on-production/ before anything changes, and the restore
 // runs even if the measurement fails. The check afterwards compares columns (type, nullability,
-// default), constraints, index definitions and row counts with the restore point: not triggers,
-// functions, policies or sequence state. If they differ, the pre-restore state is kept as a
-// branch. Any failure exits 1.
+// default), constraints, index definitions and row counts with the restore point. Column types
+// are compared without length or precision, and triggers, functions, policies and sequence state
+// are not compared. If they differ, the pre-restore state is kept as a branch and the script
+// stops. A failed measurement, restore or check exits 1; a FAIL verdict does not, since
+// measuring it is the point.
 
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { basename, resolve } from 'node:path';
@@ -86,6 +88,7 @@ for (const path of files) {
       if (result.restoredCleanly && preserved) {
         await deleteBranch(preserved.id).catch((e) => {
           result.deleteError = e.message;
+          process.exitCode = 1;
         });
       } else {
         result.keptBranch = preserved?.name ?? null;
@@ -105,5 +108,10 @@ for (const path of files) {
     } finally {
       save();
     }
+  }
+  // Never run the next migration on a production whose state is in doubt.
+  if (result.status !== 'restored' || !result.restoredCleanly) {
+    console.log('  stopping: production was not restored cleanly');
+    break;
   }
 }

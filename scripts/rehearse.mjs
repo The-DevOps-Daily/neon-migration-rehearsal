@@ -12,14 +12,16 @@
 // Neon's schema diff, and delete the branch. Results go to data/rehearsal/.
 // With --public (set automatically on GitHub Actions) errors are reported as SQLSTATE codes only,
 // because Postgres messages and DETAIL can quote row values, and nothing is written to data/.
-// The schema diff is still shown: it holds schema, which the migrations in the repo already show.
+// The schema diff is still shown. It holds schema, and only SQL written to copy data into the
+// schema (dynamic SQL that names a table after a row value, say) could put row values there:
+// rehearse only pull requests from people you would trust with the data.
 
 import { readFileSync, readdirSync, writeFileSync, mkdirSync } from 'node:fs';
 import { basename, relative, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { ROOT, need } from './lib/env.mjs';
 import { branchByName, createBranch, deleteBranch, schemaDiff } from './lib/neon.mjs';
-import { runWithTraffic, printResult } from './lib/harness.mjs';
+import { runWithTraffic, printResult, describeError } from './lib/harness.mjs';
 
 const { values: args, positionals } = parseArgs({
   allowPositionals: true,
@@ -110,6 +112,13 @@ async function rehearse(path, created) {
 }
 
 const summary = [];
+if (args.public) {
+  // Anything thrown outside the migration is reported the same way: a code, no message.
+  process.on('uncaughtException', (e) => {
+    console.error(`rehearsal failed: ${describeError(e, false)}`);
+    process.exit(1);
+  });
+}
 const save = (result) => {
   if (!args.public) writeFileSync(`${outDir}/${result.id.replace(/\.sql$/, '.json')}`, JSON.stringify(result, null, 2) + '\n');
 };
