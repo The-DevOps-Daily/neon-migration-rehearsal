@@ -1,16 +1,16 @@
 {
   "migration": "005_require_customer_phone.sql",
-  "dir": "migrations",
   "against": "production",
-  "branch": "rehearse-005-require-customer-phone-muebbwqx",
-  "branchReadyMs": 2370,
-  "warmupMs": 1885,
-  "migrationMs": 112,
+  "branch": "rehearse-005-require-customer-phone-mued46xv",
+  "branchReadyMs": 2302,
+  "warmupMs": 1807,
+  "migrationMs": 115,
   "error": "column \"phone\" of relation \"customers\" contains null values",
   "traffic": {
+    "inserted": 23,
     "writesDuring": 1,
     "readsDuring": 1,
-    "worstWriteMs": 36,
+    "worstWriteMs": 44,
     "worstReadMs": 38,
     "failedOps": []
   },
@@ -22,7 +22,7 @@
   },
   "rowsAfter": {
     "customers": 500000,
-    "orders": 4000022,
+    "orders": 4000023,
     "orders_archive": 0
   },
   "rowDeltas": {
@@ -35,9 +35,13 @@
       "pass": false,
       "reason": "column \"phone\" of relation \"customers\" contains null values"
     },
+    "app": {
+      "pass": true,
+      "reason": "no app query failed"
+    },
     "blocking": {
       "pass": true,
-      "reason": "worst write 36 ms, worst read 38 ms (limit 1000 ms)"
+      "reason": "worst write 44 ms, worst read 38 ms (limit 1000 ms)"
     },
     "rows": {
       "pass": true,
@@ -45,5 +49,7 @@
     }
   },
   "verdict": "FAIL",
-  "schemaDiff": ""
+  "schemaDiff": "",
+  "cycleMs": 12410,
+  "deleteError": null
 }

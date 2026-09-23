@@ -1,0 +1,57 @@
+{
+  "migration": "004_widen_amount.sql",
+  "restorePoint": "2026-09-23T17:21:28.420Z",
+  "warmupMs": 487,
+  "migrationMs": 9307,
+  "error": null,
+  "traffic": {
+    "inserted": 22,
+    "writesDuring": 1,
+    "readsDuring": 2,
+    "worstWriteMs": 9215,
+    "worstReadMs": 9138,
+    "failedOps": []
+  },
+  "lockWaits": {},
+  "rowsBefore": {
+    "customers": 500000,
+    "orders": 4000000,
+    "orders_archive": 0
+  },
+  "rowsAfter": {
+    "customers": 500000,
+    "orders": 4000022,
+    "orders_archive": 0
+  },
+  "rowDeltas": {
+    "customers": 0,
+    "orders": 0,
+    "orders_archive": 0
+  },
+  "gates": {
+    "runs": {
+      "pass": true,
+      "reason": "completed"
+    },
+    "app": {
+      "pass": true,
+      "reason": "no app query failed"
+    },
+    "blocking": {
+      "pass": false,
+      "reason": "worst write 9215 ms, worst read 9138 ms (limit 1000 ms)"
+    },
+    "rows": {
+      "pass": true,
+      "reason": "no table lost rows"
+    }
+  },
+  "verdict": "FAIL",
+  "restoreMs": 8540,
+  "countsAfterRestore": {
+    "customers": 500000,
+    "orders": 4000000,
+    "orders_archive": 0
+  },
+  "restoredCleanly": true
+}

@@ -1,12 +1,13 @@
 
 001_add_order_source.sql on a branch of production
-  branch rehearse-001-add-order-source-mueb6zhx ready in 2.3s
-  PASS  ran in 0.2s
+  branch rehearse-001-add-order-source-muecz12b ready in 2.6s
+  PASS  ran in 0.1s
     ok   runs     completed
-    ok   blocking worst write 43 ms, worst read 62 ms (limit 1000 ms)
+    ok   app      no app query failed
+    ok   blocking worst write 84 ms, worst read 35 ms (limit 1000 ms)
     ok   rows     no table lost rows
     | --- Database: neondb	(Branch: br-ancient-salad-b2vntgbd)
-    | +++ Database: neondb	(Branch: br-silent-surf-b209fs15)
+    | +++ Database: neondb	(Branch: br-steep-cherry-b24lx5lg)
     | @@ -57,9 +57,10 @@
     |      id bigint NOT NULL,
     |      customer_id bigint NOT NULL,
@@ -21,21 +22,22 @@
     |  ALTER TABLE public.orders OWNER TO neondb_owner;
 
 002_unique_customer_email.sql on a branch of production
-  branch rehearse-002-unique-customer-email-mueb7hci ready in 2.4s
+  branch rehearse-002-unique-customer-email-mueczkxh ready in 2.3s
   FAIL  ran in 0.4s
-    FAIL runs     could not create unique index "customers_email_lower_key" (Key (lower(email))=(user8799@example.com) is duplicated.)
-    ok   blocking worst write 47 ms, worst read 47 ms (limit 1000 ms)
+    FAIL runs     could not create unique index "customers_email_lower_key" (Key (lower(email))=(user107599@example.com) is duplicated.)
+    ok   app      no app query failed
+    ok   blocking worst write 49 ms, worst read 48 ms (limit 1000 ms)
     ok   rows     no table lost rows
 
 003_index_orders_created_at.sql on a branch of production
-  branch rehearse-003-index-orders-created-at-mueb7ri6 ready in 2.3s
-  FAIL  ran in 2.4s
+  branch rehearse-003-index-orders-created-at-mueczvp1 ready in 2.3s
+  FAIL  ran in 3.3s
     ok   runs     completed
-    FAIL blocking worst write 2234 ms, worst read 56 ms (limit 1000 ms)
+    ok   app      no app query failed
+    FAIL blocking worst write 2518 ms, worst read 544 ms (limit 1000 ms)
     ok   rows     no table lost rows
-    lock wait 2162 ms  relation: INSERT INTO orders (customer_id, amount_cents, status) VALUES ($1, $2,
     | --- Database: neondb	(Branch: br-ancient-salad-b2vntgbd)
-    | +++ Database: neondb	(Branch: br-fragrant-fire-b2b1sssa)
+    | +++ Database: neondb	(Branch: br-autumn-lake-b25e2xcs)
     | @@ -117,8 +117,15 @@
     |      ADD CONSTRAINT orders_pkey PRIMARY KEY (id);
     |  
@@ -54,15 +56,14 @@
     |  CREATE INDEX orders_customer_id_idx ON public.orders USING btree (customer_id);
 
 004_widen_amount.sql on a branch of production
-  branch rehearse-004-widen-amount-mueb8c5a ready in 2.3s
+  branch rehearse-004-widen-amount-mued0ksw ready in 6.6s
   FAIL  ran in 8.4s
     ok   runs     completed
-    FAIL blocking worst write 8212 ms, worst read 8223 ms (limit 1000 ms)
+    ok   app      no app query failed
+    FAIL blocking worst write 8377 ms, worst read 8252 ms (limit 1000 ms)
     ok   rows     no table lost rows
-    lock wait 8130 ms  relation: SELECT id, status FROM orders WHERE id = $1
-    lock wait 8122 ms  relation: INSERT INTO orders (customer_id, amount_cents, status) VALUES ($1, $2,
     | --- Database: neondb	(Branch: br-ancient-salad-b2vntgbd)
-    | +++ Database: neondb	(Branch: br-plain-glade-b20u8lkt)
+    | +++ Database: neondb	(Branch: br-gentle-surf-b2l8al8s)
     | @@ -55,9 +55,9 @@
     |  
     |  CREATE TABLE public.orders (
@@ -75,19 +76,21 @@
     |  );
 
 005_require_customer_phone.sql on a branch of production
-  branch rehearse-005-require-customer-phone-mueb90me ready in 2.3s
+  branch rehearse-005-require-customer-phone-mued1b7q ready in 2.3s
   FAIL  ran in 0.1s
     FAIL runs     column "phone" of relation "customers" contains null values
-    ok   blocking worst write 36 ms, worst read 46 ms (limit 1000 ms)
+    ok   app      no app query failed
+    ok   blocking worst write 39 ms, worst read 41 ms (limit 1000 ms)
     ok   rows     no table lost rows
 
 006_archive_refunded_orders.sql on a branch of production
-  branch rehearse-006-archive-refunded-orders-mueb9aix ready in 3.0s
-  FAIL  ran in 4.9s
+  branch rehearse-006-archive-refunded-orders-mued1kvw ready in 3.3s
+  FAIL  ran in 5.8s
     ok   runs     completed
-    ok   blocking worst write 90 ms, worst read 50 ms (limit 1000 ms)
-    FAIL rows     orders lost 2666701 rows but orders_archive gained 533293: 2133408 rows gone
+    ok   app      no app query failed
+    ok   blocking worst write 456 ms, worst read 307 ms (limit 1000 ms)
+    FAIL rows     orders lost 2666830 rows but orders_archive gained 533314: 2133516 rows unaccounted for
     | --- Database: neondb	(Branch: br-ancient-salad-b2vntgbd)
-    | +++ Database: neondb	(Branch: br-sweet-butterfly-b21pfxgw)
+    | +++ Database: neondb	(Branch: br-square-salad-b2988p0w)
 
 1 of 6 passed on production

@@ -1,0 +1,49 @@
+{
+  "migration": "002_unique_customer_email.sql",
+  "dir": "migrations",
+  "against": "production",
+  "branch": "rehearse-002-unique-customer-email-mueb7hci",
+  "branchReadyMs": 2445,
+  "warmupMs": 1925,
+  "migrationMs": 376,
+  "error": "could not create unique index \"customers_email_lower_key\" (Key (lower(email))=(user8799@example.com) is duplicated.)",
+  "traffic": {
+    "writesDuring": 3,
+    "readsDuring": 3,
+    "worstWriteMs": 47,
+    "worstReadMs": 47,
+    "failedOps": []
+  },
+  "lockWaits": {},
+  "rowsBefore": {
+    "customers": 500000,
+    "orders": 4000000,
+    "orders_archive": 0
+  },
+  "rowsAfter": {
+    "customers": 500000,
+    "orders": 4000024,
+    "orders_archive": 0
+  },
+  "rowDeltas": {
+    "customers": 0,
+    "orders": 0,
+    "orders_archive": 0
+  },
+  "gates": {
+    "runs": {
+      "pass": false,
+      "reason": "could not create unique index \"customers_email_lower_key\" (Key (lower(email))=(user8799@example.com) is duplicated.)"
+    },
+    "blocking": {
+      "pass": true,
+      "reason": "worst write 47 ms, worst read 47 ms (limit 1000 ms)"
+    },
+    "rows": {
+      "pass": true,
+      "reason": "no table lost rows"
+    }
+  },
+  "verdict": "FAIL",
+  "schemaDiff": ""
+}

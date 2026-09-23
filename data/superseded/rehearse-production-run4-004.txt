@@ -1,0 +1,11 @@
+
+004_widen_amount.sql on a branch of production
+  branch rehearse-004-widen-amount-muebmm8d ready in 2.4s
+  FAIL  ran in 8.6s
+    ok   runs     completed
+    FAIL blocking worst write 8553 ms, worst read 8552 ms (limit 1000 ms)
+    ok   rows     no table lost rows
+    lock wait 8303 ms  relation: INSERT INTO orders (customer_id, amount_cents, status) VALUES ($1, $2,
+    lock wait 8302 ms  relation: SELECT id, status FROM orders WHERE id = $1
+
+0 of 1 passed on production

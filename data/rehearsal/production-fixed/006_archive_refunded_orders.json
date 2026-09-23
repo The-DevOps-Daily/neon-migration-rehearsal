@@ -1,17 +1,17 @@
 {
   "migration": "006_archive_refunded_orders.sql",
-  "dir": "migrations/fixed",
   "against": "production",
-  "branch": "rehearse-006-archive-refunded-orders-muebjdeg",
-  "branchReadyMs": 2327,
-  "warmupMs": 2165,
-  "migrationMs": 2694,
+  "branch": "rehearse-006-archive-refunded-orders-muedbros",
+  "branchReadyMs": 2282,
+  "warmupMs": 1855,
+  "migrationMs": 2687,
   "error": null,
   "traffic": {
-    "writesDuring": 18,
-    "readsDuring": 20,
-    "worstWriteMs": 71,
-    "worstReadMs": 41,
+    "inserted": 38,
+    "writesDuring": 17,
+    "readsDuring": 19,
+    "worstWriteMs": 73,
+    "worstReadMs": 43,
     "failedOps": []
   },
   "lockWaits": {},
@@ -22,28 +22,34 @@
   },
   "rowsAfter": {
     "customers": 500000,
-    "orders": 3466741,
-    "orders_archive": 533298
+    "orders": 3466723,
+    "orders_archive": 533315
   },
   "rowDeltas": {
     "customers": 0,
-    "orders": -533298,
-    "orders_archive": 533298
+    "orders": -533315,
+    "orders_archive": 533315
   },
   "gates": {
     "runs": {
       "pass": true,
       "reason": "completed"
     },
+    "app": {
+      "pass": true,
+      "reason": "no app query failed"
+    },
     "blocking": {
       "pass": true,
-      "reason": "worst write 71 ms, worst read 41 ms (limit 1000 ms)"
+      "reason": "worst write 73 ms, worst read 43 ms (limit 1000 ms)"
     },
     "rows": {
       "pass": true,
-      "reason": "533298 rows moved orders -> orders_archive"
+      "reason": "533315 rows moved orders -> orders_archive (counts match)"
     }
   },
   "verdict": "PASS",
-  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-flat-scene-b2zsrvdm)"
+  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-long-hat-b2oz8ju8)",
+  "cycleMs": 24478,
+  "deleteError": null
 }

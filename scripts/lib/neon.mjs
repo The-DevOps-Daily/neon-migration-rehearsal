@@ -30,9 +30,11 @@ export async function branchByName(name) {
   return branches.find((b) => b.name === name) ?? null;
 }
 
-async function waitForOperations(operations) {
+async function waitForOperations(operations, timeoutMs = 300_000) {
+  const deadline = Date.now() + timeoutMs;
   for (const op of operations ?? []) {
     for (;;) {
+      if (Date.now() > deadline) throw new Error(`Neon operation ${op.action ?? op.id} did not finish in ${timeoutMs / 1000}s`);
       const { operation } = await api('GET', `/projects/${project()}/operations/${op.id}`);
       if (operation.status === 'finished') break;
       if (['failed', 'error', 'cancelled', 'skipped'].includes(operation.status)) {
@@ -60,10 +62,16 @@ export async function createBranch({ name, parentId, schemaOnly = false, expires
     endpoints: [{ type: 'read_write', autoscaling_limit_min_cu: cu, autoscaling_limit_max_cu: cu }],
   };
   const created = await api('POST', `/projects/${project()}/branches`, body);
-  await waitForOperations(created.operations);
-  const readyMs = Date.now() - started;
-  const uri = await connectionUri(created.branch.id);
-  return { branch: created.branch, endpoint: created.endpoints?.[0], uri, readyMs };
+  try {
+    await waitForOperations(created.operations);
+    const readyMs = Date.now() - started;
+    const uri = await connectionUri(created.branch.id);
+    return { branch: created.branch, endpoint: created.endpoints?.[0], uri, readyMs, started };
+  } catch (e) {
+    // The branch exists but is not usable: remove it now rather than wait for its expiry.
+    await deleteBranch(created.branch.id).catch(() => {});
+    throw e;
+  }
 }
 
 export async function connectionUri(branchId) {
