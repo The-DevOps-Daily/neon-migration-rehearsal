@@ -1,23 +1,20 @@
 {
   "migration": "004_widen_amount.sql",
-  "dir": "migrations",
   "against": "production",
-  "branch": "rehearse-004-widen-amount-muebb8x8",
-  "branchReadyMs": 2227,
-  "warmupMs": 1891,
-  "migrationMs": 8984,
+  "branch": "rehearse-004-widen-amount-mued3ju4",
+  "branchReadyMs": 2375,
+  "warmupMs": 1864,
+  "migrationMs": 8083,
   "error": null,
   "traffic": {
+    "inserted": 24,
     "writesDuring": 2,
-    "readsDuring": 2,
-    "worstWriteMs": 8814,
-    "worstReadMs": 8812,
+    "readsDuring": 1,
+    "worstWriteMs": 7911,
+    "worstReadMs": 8035,
     "failedOps": []
   },
-  "lockWaits": {
-    "relation: INSERT INTO orders (customer_id, amount_cents, status) VALUES ($1, $2,": 8660,
-    "relation: SELECT id, status FROM orders WHERE id = $1": 8660
-  },
+  "lockWaits": {},
   "rowsBefore": {
     "customers": 500000,
     "orders": 4000000,
@@ -25,7 +22,7 @@
   },
   "rowsAfter": {
     "customers": 500000,
-    "orders": 4000022,
+    "orders": 4000024,
     "orders_archive": 0
   },
   "rowDeltas": {
@@ -38,9 +35,13 @@
       "pass": true,
       "reason": "completed"
     },
+    "app": {
+      "pass": true,
+      "reason": "no app query failed"
+    },
     "blocking": {
       "pass": false,
-      "reason": "worst write 8814 ms, worst read 8812 ms (limit 1000 ms)"
+      "reason": "worst write 7911 ms, worst read 8035 ms (limit 1000 ms)"
     },
     "rows": {
       "pass": true,
@@ -48,5 +49,7 @@
     }
   },
   "verdict": "FAIL",
-  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-steep-hat-b2hkgtab)\n@@ -55,9 +55,9 @@\n \n CREATE TABLE public.orders (\n     id bigint NOT NULL,\n     customer_id bigint NOT NULL,\n-    amount_cents integer NOT NULL,\n+    amount_cents bigint NOT NULL,\n     status text NOT NULL,\n     created_at timestamp with time zone DEFAULT now() NOT NULL\n );"
+  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-delicate-night-b210m470)\n@@ -55,9 +55,9 @@\n \n CREATE TABLE public.orders (\n     id bigint NOT NULL,\n     customer_id bigint NOT NULL,\n-    amount_cents integer NOT NULL,\n+    amount_cents bigint NOT NULL,\n     status text NOT NULL,\n     created_at timestamp with time zone DEFAULT now() NOT NULL\n );",
+  "cycleMs": 29942,
+  "deleteError": null
 }

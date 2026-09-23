@@ -1,0 +1,49 @@
+{
+  "migration": "006_archive_refunded_orders.sql",
+  "dir": "migrations",
+  "against": "fixtures",
+  "branch": "rehearse-006-archive-refunded-orders-muebia42",
+  "branchReadyMs": 5685,
+  "warmupMs": 143,
+  "migrationMs": 97,
+  "error": null,
+  "traffic": {
+    "writesDuring": 1,
+    "readsDuring": 1,
+    "worstWriteMs": 32,
+    "worstReadMs": 33,
+    "failedOps": []
+  },
+  "lockWaits": {},
+  "rowsBefore": {
+    "customers": 50,
+    "orders": 200,
+    "orders_archive": 0
+  },
+  "rowsAfter": {
+    "customers": 50,
+    "orders": 223,
+    "orders_archive": 0
+  },
+  "rowDeltas": {
+    "customers": 0,
+    "orders": 0,
+    "orders_archive": 0
+  },
+  "gates": {
+    "runs": {
+      "pass": true,
+      "reason": "completed"
+    },
+    "blocking": {
+      "pass": true,
+      "reason": "worst write 32 ms, worst read 33 ms (limit 1000 ms)"
+    },
+    "rows": {
+      "pass": true,
+      "reason": "0 rows moved orders -> orders_archive"
+    }
+  },
+  "verdict": "PASS",
+  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-odd-bar-b24n2xss)"
+}

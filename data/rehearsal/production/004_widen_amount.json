@@ -1,23 +1,20 @@
 {
   "migration": "004_widen_amount.sql",
-  "dir": "migrations",
   "against": "production",
-  "branch": "rehearse-004-widen-amount-mueb8c5a",
-  "branchReadyMs": 2279,
-  "warmupMs": 2132,
-  "migrationMs": 8354,
+  "branch": "rehearse-004-widen-amount-mued0ksw",
+  "branchReadyMs": 6642,
+  "warmupMs": 2184,
+  "migrationMs": 8406,
   "error": null,
   "traffic": {
-    "writesDuring": 2,
+    "inserted": 23,
+    "writesDuring": 1,
     "readsDuring": 2,
-    "worstWriteMs": 8212,
-    "worstReadMs": 8223,
+    "worstWriteMs": 8377,
+    "worstReadMs": 8252,
     "failedOps": []
   },
-  "lockWaits": {
-    "relation: SELECT id, status FROM orders WHERE id = $1": 8130,
-    "relation: INSERT INTO orders (customer_id, amount_cents, status) VALUES ($1, $2,": 8122
-  },
+  "lockWaits": {},
   "rowsBefore": {
     "customers": 500000,
     "orders": 4000000,
@@ -38,9 +35,13 @@
       "pass": true,
       "reason": "completed"
     },
+    "app": {
+      "pass": true,
+      "reason": "no app query failed"
+    },
     "blocking": {
       "pass": false,
-      "reason": "worst write 8212 ms, worst read 8223 ms (limit 1000 ms)"
+      "reason": "worst write 8377 ms, worst read 8252 ms (limit 1000 ms)"
     },
     "rows": {
       "pass": true,
@@ -48,5 +49,7 @@
     }
   },
   "verdict": "FAIL",
-  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-plain-glade-b20u8lkt)\n@@ -55,9 +55,9 @@\n \n CREATE TABLE public.orders (\n     id bigint NOT NULL,\n     customer_id bigint NOT NULL,\n-    amount_cents integer NOT NULL,\n+    amount_cents bigint NOT NULL,\n     status text NOT NULL,\n     created_at timestamp with time zone DEFAULT now() NOT NULL\n );"
+  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-gentle-surf-b2l8al8s)\n@@ -55,9 +55,9 @@\n \n CREATE TABLE public.orders (\n     id bigint NOT NULL,\n     customer_id bigint NOT NULL,\n-    amount_cents integer NOT NULL,\n+    amount_cents bigint NOT NULL,\n     status text NOT NULL,\n     created_at timestamp with time zone DEFAULT now() NOT NULL\n );",
+  "cycleMs": 34229,
+  "deleteError": null
 }

@@ -1,0 +1,57 @@
+{
+  "migration": "003_index_orders_created_at.sql",
+  "restorePoint": "2026-09-23T17:21:00.873Z",
+  "warmupMs": 464,
+  "migrationMs": 2419,
+  "error": null,
+  "traffic": {
+    "inserted": 23,
+    "writesDuring": 1,
+    "readsDuring": 18,
+    "worstWriteMs": 2374,
+    "worstReadMs": 46,
+    "failedOps": []
+  },
+  "lockWaits": {},
+  "rowsBefore": {
+    "customers": 500000,
+    "orders": 4000000,
+    "orders_archive": 0
+  },
+  "rowsAfter": {
+    "customers": 500000,
+    "orders": 4000023,
+    "orders_archive": 0
+  },
+  "rowDeltas": {
+    "customers": 0,
+    "orders": 0,
+    "orders_archive": 0
+  },
+  "gates": {
+    "runs": {
+      "pass": true,
+      "reason": "completed"
+    },
+    "app": {
+      "pass": true,
+      "reason": "no app query failed"
+    },
+    "blocking": {
+      "pass": false,
+      "reason": "worst write 2374 ms, worst read 46 ms (limit 1000 ms)"
+    },
+    "rows": {
+      "pass": true,
+      "reason": "no table lost rows"
+    }
+  },
+  "verdict": "FAIL",
+  "restoreMs": 7530,
+  "countsAfterRestore": {
+    "customers": 500000,
+    "orders": 4000000,
+    "orders_archive": 0
+  },
+  "restoredCleanly": true
+}

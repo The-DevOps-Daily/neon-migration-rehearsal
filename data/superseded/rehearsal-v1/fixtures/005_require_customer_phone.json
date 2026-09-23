@@ -1,0 +1,49 @@
+{
+  "migration": "005_require_customer_phone.sql",
+  "dir": "migrations",
+  "against": "fixtures",
+  "branch": "rehearse-005-require-customer-phone-muebhrz7",
+  "branchReadyMs": 4922,
+  "warmupMs": 164,
+  "migrationMs": 114,
+  "error": null,
+  "traffic": {
+    "writesDuring": 1,
+    "readsDuring": 1,
+    "worstWriteMs": 37,
+    "worstReadMs": 37,
+    "failedOps": []
+  },
+  "lockWaits": {},
+  "rowsBefore": {
+    "customers": 50,
+    "orders": 200,
+    "orders_archive": 0
+  },
+  "rowsAfter": {
+    "customers": 50,
+    "orders": 223,
+    "orders_archive": 0
+  },
+  "rowDeltas": {
+    "customers": 0,
+    "orders": 0,
+    "orders_archive": 0
+  },
+  "gates": {
+    "runs": {
+      "pass": true,
+      "reason": "completed"
+    },
+    "blocking": {
+      "pass": true,
+      "reason": "worst write 37 ms, worst read 37 ms (limit 1000 ms)"
+    },
+    "rows": {
+      "pass": true,
+      "reason": "no table lost rows"
+    }
+  },
+  "verdict": "PASS",
+  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-mute-hall-b289wsor)\n@@ -27,9 +27,9 @@\n \n CREATE TABLE public.customers (\n     id bigint NOT NULL,\n     email text NOT NULL,\n-    phone text,\n+    phone text NOT NULL,\n     created_at timestamp with time zone DEFAULT now() NOT NULL\n );"
+}

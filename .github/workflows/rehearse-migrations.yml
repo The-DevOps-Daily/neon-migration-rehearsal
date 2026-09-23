@@ -1,5 +1,11 @@
 name: Rehearse migrations
 
+# The rehearsal code and its dependencies come from the base branch, never from the pull
+# request: a pull request could otherwise change a script or package.json and read the key.
+# The only thing taken from the pull request is the SQL of the migrations it adds or changes.
+# That SQL still runs against a branch of production data, so only rehearse pull requests from
+# people who can push to this repository, and keep the key scoped to this project.
+
 on:
   pull_request:
     paths:
@@ -15,13 +21,15 @@ concurrency:
 
 jobs:
   rehearse:
-    # Pull requests from forks get no secrets, so only rehearse branches of this repository.
+    # Pull requests from forks get no secrets; only rehearse branches of this repository.
     if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Check out the base branch (trusted code)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ github.event.pull_request.base.sha }}
           fetch-depth: 0
           persist-credentials: false
 
@@ -29,33 +37,46 @@ jobs:
         with:
           node-version: 22
 
-      - run: npm ci
+      - run: npm ci --ignore-scripts
 
-      - name: Find the migrations this pull request adds or changes
+      - name: Take only the pull request's migration files, in order
         id: changed
         env:
-          BASE_REF: ${{ github.base_ref }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
-          files=$(git diff --name-only --diff-filter=AM "origin/$BASE_REF...HEAD" -- 'migrations/*.sql' \
-            | grep -E '^migrations/[A-Za-z0-9_.-]+\.sql$' | tr '\n' ' ')
+          git fetch --no-tags origin "$HEAD_SHA"
+          mkdir -p "$RUNNER_TEMP/pr-migrations"
+          files=""
+          for path in $(git diff --name-only --diff-filter=AM "$BASE_SHA...$HEAD_SHA" -- 'migrations/*.sql' | sort); do
+            case "$path" in
+              migrations/*/*) continue ;;
+            esac
+            name=$(basename "$path")
+            if ! printf '%s' "$name" | grep -Eq '^[A-Za-z0-9_.-]+\.sql$'; then continue; fi
+            git show "$HEAD_SHA:$path" > "$RUNNER_TEMP/pr-migrations/$name"
+            files="$files $RUNNER_TEMP/pr-migrations/$name"
+          done
           echo "files=$files" >> "$GITHUB_OUTPUT"
 
       - name: Rehearse on a Neon branch of production
         if: steps.changed.outputs.files != ''
         env:
-          # A project-scoped key: it can branch this project and nothing else.
           NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
           NEON_PROJECT_ID: ${{ vars.NEON_PROJECT_ID }}
           PRODUCTION_BRANCH: main
           FILES: ${{ steps.changed.outputs.files }}
-        run: node scripts/rehearse.mjs $FILES --markdown rehearsal.md
+        # --public is automatic on GitHub Actions: no Postgres error DETAIL (row values) in the log or comment
+        run: node scripts/rehearse.mjs --sequence $FILES --markdown "$RUNNER_TEMP/rehearsal.md"
 
       - name: Post the result on the pull request
         if: always() && steps.changed.outputs.files != ''
         env:
           GH_TOKEN: ${{ github.token }}
           PR: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
         run: |
-          test -f rehearsal.md || echo "The rehearsal did not finish. See the workflow log." > rehearsal.md
-          gh pr comment "$PR" --body-file rehearsal.md --edit-last 2>/dev/null \
-            || gh pr comment "$PR" --body-file rehearsal.md
+          body="$RUNNER_TEMP/rehearsal.md"
+          test -f "$body" || echo "The rehearsal did not finish. See the workflow log." > "$body"
+          gh pr comment "$PR" --repo "$REPO" --body-file "$body" --edit-last 2>/dev/null \
+            || gh pr comment "$PR" --repo "$REPO" --body-file "$body"

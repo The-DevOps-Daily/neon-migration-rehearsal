@@ -1,17 +1,17 @@
 {
   "migration": "004_widen_amount.sql",
-  "dir": "migrations",
   "against": "fixtures",
-  "branch": "rehearse-004-widen-amount-muebh8mh",
-  "branchReadyMs": 5562,
-  "warmupMs": 169,
-  "migrationMs": 125,
+  "branch": "rehearse-004-widen-amount-mued9p1s",
+  "branchReadyMs": 5572,
+  "warmupMs": 154,
+  "migrationMs": 113,
   "error": null,
   "traffic": {
+    "inserted": 24,
     "writesDuring": 1,
     "readsDuring": 1,
-    "worstWriteMs": 33,
-    "worstReadMs": 36,
+    "worstWriteMs": 36,
+    "worstReadMs": 35,
     "failedOps": []
   },
   "lockWaits": {},
@@ -22,7 +22,7 @@
   },
   "rowsAfter": {
     "customers": 50,
-    "orders": 223,
+    "orders": 224,
     "orders_archive": 0
   },
   "rowDeltas": {
@@ -35,9 +35,13 @@
       "pass": true,
       "reason": "completed"
     },
+    "app": {
+      "pass": true,
+      "reason": "no app query failed"
+    },
     "blocking": {
       "pass": true,
-      "reason": "worst write 33 ms, worst read 36 ms (limit 1000 ms)"
+      "reason": "worst write 36 ms, worst read 35 ms (limit 1000 ms)"
     },
     "rows": {
       "pass": true,
@@ -45,5 +49,7 @@
     }
   },
   "verdict": "PASS",
-  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-red-moon-b2nvgq1h)\n@@ -55,9 +55,9 @@\n \n CREATE TABLE public.orders (\n     id bigint NOT NULL,\n     customer_id bigint NOT NULL,\n-    amount_cents integer NOT NULL,\n+    amount_cents bigint NOT NULL,\n     status text NOT NULL,\n     created_at timestamp with time zone DEFAULT now() NOT NULL\n );"
+  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-young-wind-b2i4n6wr)\n@@ -55,9 +55,9 @@\n \n CREATE TABLE public.orders (\n     id bigint NOT NULL,\n     customer_id bigint NOT NULL,\n-    amount_cents integer NOT NULL,\n+    amount_cents bigint NOT NULL,\n     status text NOT NULL,\n     created_at timestamp with time zone DEFAULT now() NOT NULL\n );",
+  "cycleMs": 24636,
+  "deleteError": null
 }

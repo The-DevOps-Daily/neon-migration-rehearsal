@@ -1,12 +1,13 @@
 
 003_index_orders_created_at.sql on a branch of production
-  branch rehearse-003-index-orders-created-at-muebitju ready in 2.8s
+  branch rehearse-003-index-orders-created-at-muedb98w ready in 2.4s
   PASS  ran in 2.4s
     ok   runs     completed
-    ok   blocking worst write 86 ms, worst read 45 ms (limit 1000 ms)
+    ok   app      no app query failed
+    ok   blocking worst write 81 ms, worst read 49 ms (limit 1000 ms)
     ok   rows     no table lost rows
     | --- Database: neondb	(Branch: br-ancient-salad-b2vntgbd)
-    | +++ Database: neondb	(Branch: br-soft-block-b2gnxeyy)
+    | +++ Database: neondb	(Branch: br-wild-tooth-b29twey9)
     | @@ -117,8 +117,15 @@
     |      ADD CONSTRAINT orders_pkey PRIMARY KEY (id);
     |  
@@ -25,12 +26,13 @@
     |  CREATE INDEX orders_customer_id_idx ON public.orders USING btree (customer_id);
 
 006_archive_refunded_orders.sql on a branch of production
-  branch rehearse-006-archive-refunded-orders-muebjdeg ready in 2.3s
+  branch rehearse-006-archive-refunded-orders-muedbros ready in 2.3s
   PASS  ran in 2.7s
     ok   runs     completed
-    ok   blocking worst write 71 ms, worst read 41 ms (limit 1000 ms)
-    ok   rows     533298 rows moved orders -> orders_archive
+    ok   app      no app query failed
+    ok   blocking worst write 73 ms, worst read 43 ms (limit 1000 ms)
+    ok   rows     533315 rows moved orders -> orders_archive (counts match)
     | --- Database: neondb	(Branch: br-ancient-salad-b2vntgbd)
-    | +++ Database: neondb	(Branch: br-flat-scene-b2zsrvdm)
+    | +++ Database: neondb	(Branch: br-long-hat-b2oz8ju8)
 
 2 of 2 passed on production

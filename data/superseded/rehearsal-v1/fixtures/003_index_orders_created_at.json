@@ -1,0 +1,49 @@
+{
+  "migration": "003_index_orders_created_at.sql",
+  "dir": "migrations",
+  "against": "fixtures",
+  "branch": "rehearse-003-index-orders-created-at-muebgq7o",
+  "branchReadyMs": 5484,
+  "warmupMs": 140,
+  "migrationMs": 105,
+  "error": null,
+  "traffic": {
+    "writesDuring": 1,
+    "readsDuring": 1,
+    "worstWriteMs": 36,
+    "worstReadMs": 44,
+    "failedOps": []
+  },
+  "lockWaits": {},
+  "rowsBefore": {
+    "customers": 50,
+    "orders": 200,
+    "orders_archive": 0
+  },
+  "rowsAfter": {
+    "customers": 50,
+    "orders": 223,
+    "orders_archive": 0
+  },
+  "rowDeltas": {
+    "customers": 0,
+    "orders": 0,
+    "orders_archive": 0
+  },
+  "gates": {
+    "runs": {
+      "pass": true,
+      "reason": "completed"
+    },
+    "blocking": {
+      "pass": true,
+      "reason": "worst write 36 ms, worst read 44 ms (limit 1000 ms)"
+    },
+    "rows": {
+      "pass": true,
+      "reason": "no table lost rows"
+    }
+  },
+  "verdict": "PASS",
+  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-tiny-fog-b2vy2m4o)\n@@ -117,8 +117,15 @@\n     ADD CONSTRAINT orders_pkey PRIMARY KEY (id);\n \n \n --\n+-- Name: orders_created_at_idx; Type: INDEX; Schema: public; Owner: neondb_owner\n+--\n+\n+CREATE INDEX orders_created_at_idx ON public.orders USING btree (created_at);\n+\n+\n+--\n -- Name: orders_customer_id_idx; Type: INDEX; Schema: public; Owner: neondb_owner\n --\n \n CREATE INDEX orders_customer_id_idx ON public.orders USING btree (customer_id);"
+}

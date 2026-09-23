@@ -1,0 +1,49 @@
+{
+  "migration": "006_archive_refunded_orders.sql",
+  "dir": "migrations",
+  "against": "production",
+  "branch": "rehearse-006-archive-refunded-orders-muebc78b",
+  "branchReadyMs": 3038,
+  "warmupMs": 1933,
+  "migrationMs": 5042,
+  "error": null,
+  "traffic": {
+    "writesDuring": 31,
+    "readsDuring": 37,
+    "worstWriteMs": 83,
+    "worstReadMs": 53,
+    "failedOps": []
+  },
+  "lockWaits": {},
+  "rowsBefore": {
+    "customers": 500000,
+    "orders": 4000000,
+    "orders_archive": 0
+  },
+  "rowsAfter": {
+    "customers": 500000,
+    "orders": 1333345,
+    "orders_archive": 533294
+  },
+  "rowDeltas": {
+    "customers": 0,
+    "orders": -2666707,
+    "orders_archive": 533294
+  },
+  "gates": {
+    "runs": {
+      "pass": true,
+      "reason": "completed"
+    },
+    "blocking": {
+      "pass": true,
+      "reason": "worst write 83 ms, worst read 53 ms (limit 1000 ms)"
+    },
+    "rows": {
+      "pass": false,
+      "reason": "orders lost 2666707 rows but orders_archive gained 533294: 2133413 rows gone"
+    }
+  },
+  "verdict": "FAIL",
+  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-weathered-heart-b2r13bf6)"
+}

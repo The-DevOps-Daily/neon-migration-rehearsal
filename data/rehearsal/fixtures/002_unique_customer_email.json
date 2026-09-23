@@ -1,17 +1,17 @@
 {
   "migration": "002_unique_customer_email.sql",
-  "dir": "migrations",
   "against": "fixtures",
-  "branch": "rehearse-002-unique-customer-email-muebg8hx",
-  "branchReadyMs": 5102,
-  "warmupMs": 149,
-  "migrationMs": 106,
+  "branch": "rehearse-002-unique-customer-email-mued8pag",
+  "branchReadyMs": 5748,
+  "warmupMs": 144,
+  "migrationMs": 101,
   "error": null,
   "traffic": {
+    "inserted": 23,
     "writesDuring": 1,
     "readsDuring": 1,
-    "worstWriteMs": 36,
-    "worstReadMs": 40,
+    "worstWriteMs": 33,
+    "worstReadMs": 33,
     "failedOps": []
   },
   "lockWaits": {},
@@ -35,9 +35,13 @@
       "pass": true,
       "reason": "completed"
     },
+    "app": {
+      "pass": true,
+      "reason": "no app query failed"
+    },
     "blocking": {
       "pass": true,
-      "reason": "worst write 36 ms, worst read 40 ms (limit 1000 ms)"
+      "reason": "worst write 33 ms, worst read 33 ms (limit 1000 ms)"
     },
     "rows": {
       "pass": true,
@@ -45,5 +49,7 @@
     }
   },
   "verdict": "PASS",
-  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-polished-forest-b2pz9s7x)\n@@ -117,8 +117,15 @@\n     ADD CONSTRAINT orders_pkey PRIMARY KEY (id);\n \n \n --\n+-- Name: customers_email_lower_key; Type: INDEX; Schema: public; Owner: neondb_owner\n+--\n+\n+CREATE UNIQUE INDEX customers_email_lower_key ON public.customers USING btree (lower(email));\n+\n+\n+--\n -- Name: orders_customer_id_idx; Type: INDEX; Schema: public; Owner: neondb_owner\n --\n \n CREATE INDEX orders_customer_id_idx ON public.orders USING btree (customer_id);"
+  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-tiny-rice-b2tvwdh2)\n@@ -117,8 +117,15 @@\n     ADD CONSTRAINT orders_pkey PRIMARY KEY (id);\n \n \n --\n+-- Name: customers_email_lower_key; Type: INDEX; Schema: public; Owner: neondb_owner\n+--\n+\n+CREATE UNIQUE INDEX customers_email_lower_key ON public.customers USING btree (lower(email));\n+\n+\n+--\n -- Name: orders_customer_id_idx; Type: INDEX; Schema: public; Owner: neondb_owner\n --\n \n CREATE INDEX orders_customer_id_idx ON public.orders USING btree (customer_id);",
+  "cycleMs": 23273,
+  "deleteError": null
 }
