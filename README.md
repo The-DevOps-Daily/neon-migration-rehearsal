@@ -3,7 +3,7 @@
 Rehearse every Postgres migration on a Neon branch of production before it ships.
 For each migration, the runner branches production (copy-on-write, a few
 seconds), runs the migration while a small app keeps reading and writing, checks
-three gates, prints Neon's schema diff, and deletes the branch.
+four gates, prints Neon's schema diff, and deletes the branch.
 
 The same six migrations passed 6 of 6 on a schema-only branch with CI fixtures,
 and 1 of 6 on branches of production, in each of three runs.
