@@ -1,20 +1,29 @@
 {
+  "id": "006_archive_refunded_orders.sql",
   "migration": "006_archive_refunded_orders.sql",
   "against": "production",
-  "branch": "rehearse-006-archive-refunded-orders-mued1kvw",
-  "branchReadyMs": 3256,
-  "warmupMs": 1915,
-  "migrationMs": 5832,
+  "branch": "rehearse-006-archive-refunded-orders-muee4wag",
+  "branchReadyMs": 2311,
+  "connections": {
+    "migration": "direct",
+    "app": "pooled"
+  },
+  "warmupMs": 1781,
+  "migrationMs": 4857,
   "error": null,
   "traffic": {
-    "inserted": 53,
-    "writesDuring": 31,
-    "readsDuring": 40,
-    "worstWriteMs": 456,
-    "worstReadMs": 307,
+    "inserted": 51,
+    "writesDuring": 29,
+    "readsDuring": 36,
+    "worstWriteMs": 108,
+    "worstReadMs": 43,
     "failedOps": []
   },
   "lockWaits": {},
+  "lockSamples": {
+    "ok": 33,
+    "failed": 0
+  },
   "rowsBefore": {
     "customers": 500000,
     "orders": 4000000,
@@ -22,13 +31,13 @@
   },
   "rowsAfter": {
     "customers": 500000,
-    "orders": 1333223,
-    "orders_archive": 533314
+    "orders": 1333142,
+    "orders_archive": 533330
   },
   "rowDeltas": {
     "customers": 0,
-    "orders": -2666830,
-    "orders_archive": 533314
+    "orders": -2666909,
+    "orders_archive": 533330
   },
   "gates": {
     "runs": {
@@ -41,15 +50,15 @@
     },
     "blocking": {
       "pass": true,
-      "reason": "worst write 456 ms, worst read 307 ms (limit 1000 ms)"
+      "reason": "worst write 108 ms, worst read 43 ms (limit 1000 ms)"
     },
     "rows": {
       "pass": false,
-      "reason": "orders lost 2666830 rows but orders_archive gained 533314: 2133516 rows unaccounted for"
+      "reason": "orders lost 2666909 rows but orders_archive gained 533330: 2133579 rows unaccounted for"
     }
   },
   "verdict": "FAIL",
-  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-square-salad-b2988p0w)",
-  "cycleMs": 29224,
+  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-raspy-violet-b2big0v2)",
+  "cycleMs": 25954,
   "deleteError": null
 }

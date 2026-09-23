@@ -1,0 +1,69 @@
+{
+  "migration": "004_widen_amount.sql",
+  "restorePoint": "2026-09-23T17:53:35.918Z",
+  "status": "restored",
+  "connections": {
+    "migration": "direct",
+    "app": "pooled"
+  },
+  "warmupMs": 463,
+  "migrationMs": 8388,
+  "error": null,
+  "traffic": {
+    "inserted": 22,
+    "writesDuring": 2,
+    "readsDuring": 1,
+    "worstWriteMs": 8257,
+    "worstReadMs": 8334,
+    "failedOps": []
+  },
+  "lockWaits": {
+    "relation: SELECT id, status FROM orders WHERE id = $1": 8073,
+    "relation: INSERT INTO orders (customer_id, amount_cents, status) VALUES ($1, $2,": 7989
+  },
+  "lockSamples": {
+    "ok": 47,
+    "failed": 0
+  },
+  "rowsBefore": {
+    "customers": 500000,
+    "orders": 4000000,
+    "orders_archive": 0
+  },
+  "rowsAfter": {
+    "customers": 500000,
+    "orders": 4000022,
+    "orders_archive": 0
+  },
+  "rowDeltas": {
+    "customers": 0,
+    "orders": 0,
+    "orders_archive": 0
+  },
+  "gates": {
+    "runs": {
+      "pass": true,
+      "reason": "completed"
+    },
+    "app": {
+      "pass": true,
+      "reason": "no app query failed"
+    },
+    "blocking": {
+      "pass": false,
+      "reason": "worst write 8257 ms, worst read 8334 ms (limit 1000 ms)"
+    },
+    "rows": {
+      "pass": true,
+      "reason": "no table lost rows"
+    }
+  },
+  "verdict": "FAIL",
+  "restoreMs": 8842,
+  "countsAfterRestore": {
+    "customers": 500000,
+    "orders": 4000000,
+    "orders_archive": 0
+  },
+  "restoredCleanly": true
+}

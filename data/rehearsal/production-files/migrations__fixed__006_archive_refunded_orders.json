@@ -1,0 +1,64 @@
+{
+  "id": "migrations__fixed__006_archive_refunded_orders.sql",
+  "migration": "006_archive_refunded_orders.sql",
+  "against": "production",
+  "branch": "rehearse-sequence-mueefrja",
+  "branchReadyMs": 2510,
+  "connections": {
+    "migration": "direct",
+    "app": "pooled"
+  },
+  "warmupMs": 463,
+  "migrationMs": 3235,
+  "error": null,
+  "traffic": {
+    "inserted": 41,
+    "writesDuring": 20,
+    "readsDuring": 24,
+    "worstWriteMs": 78,
+    "worstReadMs": 47,
+    "failedOps": []
+  },
+  "lockWaits": {},
+  "lockSamples": {
+    "ok": 26,
+    "failed": 0
+  },
+  "rowsBefore": {
+    "customers": 500000,
+    "orders": 4000038,
+    "orders_archive": 0
+  },
+  "rowsAfter": {
+    "customers": 500000,
+    "orders": 3466746,
+    "orders_archive": 533333
+  },
+  "rowDeltas": {
+    "customers": 0,
+    "orders": -533333,
+    "orders_archive": 533333
+  },
+  "gates": {
+    "runs": {
+      "pass": true,
+      "reason": "completed"
+    },
+    "app": {
+      "pass": true,
+      "reason": "no app query failed"
+    },
+    "blocking": {
+      "pass": true,
+      "reason": "worst write 78 ms, worst read 47 ms (limit 1000 ms)"
+    },
+    "rows": {
+      "pass": true,
+      "reason": "533333 rows moved orders -> orders_archive (counts match)"
+    }
+  },
+  "verdict": "PASS",
+  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-orange-bread-b2hu6bdq)\n@@ -117,8 +117,15 @@\n     ADD CONSTRAINT orders_pkey PRIMARY KEY (id);\n \n \n --\n+-- Name: orders_created_at_idx; Type: INDEX; Schema: public; Owner: neondb_owner\n+--\n+\n+CREATE INDEX orders_created_at_idx ON public.orders USING btree (created_at);\n+\n+\n+--\n -- Name: orders_customer_id_idx; Type: INDEX; Schema: public; Owner: neondb_owner\n --\n \n CREATE INDEX orders_customer_id_idx ON public.orders USING btree (customer_id);",
+  "cycleMs": 38311,
+  "deleteError": null
+}

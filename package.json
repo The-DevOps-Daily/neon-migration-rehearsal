@@ -8,6 +8,7 @@
   "license": "MIT",
   "type": "module",
   "dependencies": {
+    "neonctl": "^6.0.0",
     "pg": "^8.23.0"
   },
   "private": true,

@@ -5,8 +5,11 @@
 //   node scripts/check-on-production.mjs migrations/003_index_orders_created_at.sql
 //
 // Only for this demo project: it changes production for a few seconds before restoring it.
-// The restore runs even if the measurement fails. If the restored schema or row counts do not
-// match the restore point, the pre-restore state is kept as a branch and the script exits 1.
+// The restore point is written to data/on-production/ before anything changes, and the restore
+// runs even if the measurement fails. The check afterwards compares columns (type, nullability,
+// default), constraints, index definitions and row counts with the restore point: not triggers,
+// functions, policies or sequence state. If they differ, the pre-restore state is kept as a
+// branch. Any failure exits 1.
 
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { basename, resolve } from 'node:path';
@@ -31,6 +34,7 @@ const files = process.argv.slice(2);
 if (files.length === 0) throw new Error('usage: node scripts/check-on-production.mjs <migration.sql>...');
 const production = await branchByName(need('PRODUCTION_BRANCH'));
 const uri = await connectionUri(production.id);
+const appUri = await connectionUri(production.id, { pooled: true });
 mkdirSync(`${ROOT}/data/on-production`, { recursive: true });
 
 for (const path of files) {
@@ -39,42 +43,67 @@ for (const path of files) {
   console.log(`\n${file} on production itself`);
 
   const c = await connect(uri);
-  const { rows } = await c.query('SELECT now() AS t');
-  const restorePoint = rows[0].t.toISOString();
-  const countsBefore = await rowCounts(c);
-  const schemaBefore = await schemaFingerprint(c);
-  await c.end();
+  let restorePoint, countsBefore, schemaBefore;
+  try {
+    const { rows } = await c.query('SELECT now() AS t');
+    restorePoint = rows[0].t.toISOString();
+    countsBefore = await rowCounts(c);
+    schemaBefore = await schemaFingerprint(c);
+  } finally {
+    await c.end().catch(() => {});
+  }
+
+  const result = { migration: file, restorePoint, status: 'started: restore production to restorePoint if this is all there is' };
+  const out = `${ROOT}/data/on-production/${file.replace(/\.sql$/, '')}-${restorePoint.replace(/[:.]/g, '')}.json`;
+  const save = () => writeFileSync(out, JSON.stringify(result, null, 2) + '\n');
+  // On disk before production changes, so a crash still leaves the point to restore to.
+  save();
   // Leave a moment between the restore point and the first write.
   await new Promise((r) => setTimeout(r, 2000));
 
-  const result = { migration: file, restorePoint };
   try {
-    Object.assign(result, await runWithTraffic(uri, sql));
+    Object.assign(result, await runWithTraffic(uri, sql, { appUri }));
     printResult(result);
   } catch (e) {
     result.harnessError = e.message;
+    process.exitCode = 1;
     console.log(`  measurement failed: ${e.message}`);
   } finally {
-    const started = Date.now();
-    const preserved = await restoreBranch(production.id, restorePoint, `before-restore-${Date.now().toString(36)}`);
-    result.restoreMs = Date.now() - started;
-    const check = await connect(uri);
-    result.countsAfterRestore = await rowCounts(check);
-    const schemaAfter = await schemaFingerprint(check);
-    await check.end();
-    result.restoredCleanly =
-      JSON.stringify(result.countsAfterRestore) === JSON.stringify(countsBefore) && schemaAfter === schemaBefore;
-    if (result.restoredCleanly && preserved) {
-      await deleteBranch(preserved.id);
-    } else {
-      result.keptBranch = preserved?.name ?? null;
+    try {
+      const started = Date.now();
+      const preserved = await restoreBranch(production.id, restorePoint, `before-restore-${Date.now().toString(36)}`);
+      result.restoreMs = Date.now() - started;
+      const check = await connect(uri);
+      let schemaAfter;
+      try {
+        result.countsAfterRestore = await rowCounts(check);
+        schemaAfter = await schemaFingerprint(check);
+      } finally {
+        await check.end().catch(() => {});
+      }
+      result.restoredCleanly =
+        JSON.stringify(result.countsAfterRestore) === JSON.stringify(countsBefore) && schemaAfter === schemaBefore;
+      if (result.restoredCleanly && preserved) {
+        await deleteBranch(preserved.id).catch((e) => {
+          result.deleteError = e.message;
+        });
+      } else {
+        result.keptBranch = preserved?.name ?? null;
+        process.exitCode = 1;
+      }
+      result.status = 'restored';
+      console.log(
+        `  restored production to ${restorePoint} in ${(result.restoreMs / 1000).toFixed(1)}s; columns, constraints, indexes and row counts ${
+          result.restoredCleanly ? 'match' : 'DIFFER from'
+        } the restore point${result.keptBranch ? ` (kept ${result.keptBranch})` : ''}`,
+      );
+    } catch (e) {
+      result.status = 'restore or check failed: restore production to restorePoint by hand';
+      result.restoreError = e.message;
       process.exitCode = 1;
+      console.log(`  RESTORE OR CHECK FAILED: ${e.message}. Restore to ${restorePoint} by hand.`);
+    } finally {
+      save();
     }
-    console.log(
-      `  restored production to ${restorePoint} in ${(result.restoreMs / 1000).toFixed(1)}s; schema and row counts ${
-        result.restoredCleanly ? 'match' : `DIFFER from`
-      } the restore point${result.keptBranch ? ` (kept ${result.keptBranch})` : ''}`,
-    );
-    writeFileSync(`${ROOT}/data/on-production/${file.replace(/\.sql$/, '')}-${restorePoint.replace(/[:.]/g, '')}.json`, JSON.stringify(result, null, 2) + '\n');
   }
 }

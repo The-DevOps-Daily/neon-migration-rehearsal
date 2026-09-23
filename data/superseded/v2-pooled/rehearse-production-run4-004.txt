@@ -1,0 +1,22 @@
+
+004_widen_amount.sql on a branch of production
+  branch rehearse-004-widen-amount-muedf9jx ready in 2.3s
+  FAIL  ran in 13.2s
+    ok   runs     completed
+    ok   app      no app query failed
+    FAIL blocking worst write 13114 ms, worst read 13147 ms (limit 1000 ms)
+    ok   rows     no table lost rows
+    | --- Database: neondb	(Branch: br-ancient-salad-b2vntgbd)
+    | +++ Database: neondb	(Branch: br-purple-hat-b2rgmptv)
+    | @@ -55,9 +55,9 @@
+    |  
+    |  CREATE TABLE public.orders (
+    |      id bigint NOT NULL,
+    |      customer_id bigint NOT NULL,
+    | -    amount_cents integer NOT NULL,
+    | +    amount_cents bigint NOT NULL,
+    |      status text NOT NULL,
+    |      created_at timestamp with time zone DEFAULT now() NOT NULL
+    |  );
+
+0 of 1 passed on production

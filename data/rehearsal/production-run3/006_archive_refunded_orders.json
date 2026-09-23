@@ -1,20 +1,29 @@
 {
+  "id": "006_archive_refunded_orders.sql",
   "migration": "006_archive_refunded_orders.sql",
   "against": "production",
-  "branch": "rehearse-006-archive-refunded-orders-mued7ljt",
-  "branchReadyMs": 2274,
-  "warmupMs": 2123,
-  "migrationMs": 5238,
+  "branch": "rehearse-006-archive-refunded-orders-mueea8ai",
+  "branchReadyMs": 2352,
+  "connections": {
+    "migration": "direct",
+    "app": "pooled"
+  },
+  "warmupMs": 2270,
+  "migrationMs": 4629,
   "error": null,
   "traffic": {
-    "inserted": 52,
-    "writesDuring": 31,
-    "readsDuring": 38,
+    "inserted": 49,
+    "writesDuring": 28,
+    "readsDuring": 34,
     "worstWriteMs": 92,
-    "worstReadMs": 49,
+    "worstReadMs": 45,
     "failedOps": []
   },
   "lockWaits": {},
+  "lockSamples": {
+    "ok": 32,
+    "failed": 0
+  },
   "rowsBefore": {
     "customers": 500000,
     "orders": 4000000,
@@ -22,13 +31,13 @@
   },
   "rowsAfter": {
     "customers": 500000,
-    "orders": 1333210,
-    "orders_archive": 533315
+    "orders": 1333130,
+    "orders_archive": 533331
   },
   "rowDeltas": {
     "customers": 0,
-    "orders": -2666842,
-    "orders_archive": 533315
+    "orders": -2666919,
+    "orders_archive": 533331
   },
   "gates": {
     "runs": {
@@ -41,15 +50,15 @@
     },
     "blocking": {
       "pass": true,
-      "reason": "worst write 92 ms, worst read 49 ms (limit 1000 ms)"
+      "reason": "worst write 92 ms, worst read 45 ms (limit 1000 ms)"
     },
     "rows": {
       "pass": false,
-      "reason": "orders lost 2666842 rows but orders_archive gained 533315: 2133527 rows unaccounted for"
+      "reason": "orders lost 2666919 rows but orders_archive gained 533331: 2133588 rows unaccounted for"
     }
   },
   "verdict": "FAIL",
-  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-delicate-block-b27shncp)",
-  "cycleMs": 27068,
+  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-square-cloud-b2hmxc7d)",
+  "cycleMs": 25432,
   "deleteError": null
 }

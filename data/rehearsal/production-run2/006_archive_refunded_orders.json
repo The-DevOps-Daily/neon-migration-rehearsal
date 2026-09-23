@@ -1,20 +1,29 @@
 {
+  "id": "006_archive_refunded_orders.sql",
   "migration": "006_archive_refunded_orders.sql",
   "against": "production",
-  "branch": "rehearse-006-archive-refunded-orders-mued4gim",
-  "branchReadyMs": 2409,
-  "warmupMs": 1969,
-  "migrationMs": 6852,
+  "branch": "rehearse-006-archive-refunded-orders-muee7lka",
+  "branchReadyMs": 2435,
+  "connections": {
+    "migration": "direct",
+    "app": "pooled"
+  },
+  "warmupMs": 2056,
+  "migrationMs": 4905,
   "error": null,
   "traffic": {
-    "inserted": 58,
-    "writesDuring": 37,
-    "readsDuring": 47,
-    "worstWriteMs": 236,
-    "worstReadMs": 148,
+    "inserted": 52,
+    "writesDuring": 30,
+    "readsDuring": 36,
+    "worstWriteMs": 149,
+    "worstReadMs": 47,
     "failedOps": []
   },
   "lockWaits": {},
+  "lockSamples": {
+    "ok": 34,
+    "failed": 0
+  },
   "rowsBefore": {
     "customers": 500000,
     "orders": 4000000,
@@ -22,13 +31,13 @@
   },
   "rowsAfter": {
     "customers": 500000,
-    "orders": 1333222,
-    "orders_archive": 533314
+    "orders": 1333138,
+    "orders_archive": 533330
   },
   "rowDeltas": {
     "customers": 0,
-    "orders": -2666836,
-    "orders_archive": 533314
+    "orders": -2666914,
+    "orders_archive": 533330
   },
   "gates": {
     "runs": {
@@ -41,15 +50,15 @@
     },
     "blocking": {
       "pass": true,
-      "reason": "worst write 236 ms, worst read 148 ms (limit 1000 ms)"
+      "reason": "worst write 149 ms, worst read 47 ms (limit 1000 ms)"
     },
     "rows": {
       "pass": false,
-      "reason": "orders lost 2666836 rows but orders_archive gained 533314: 2133522 rows unaccounted for"
+      "reason": "orders lost 2666914 rows but orders_archive gained 533330: 2133584 rows unaccounted for"
     }
   },
   "verdict": "FAIL",
-  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-frosty-pond-b2k70ukj)",
-  "cycleMs": 28534,
+  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-polished-voice-b22usv1q)",
+  "cycleMs": 23962,
   "deleteError": null
 }

@@ -1,13 +1,15 @@
 
 004_widen_amount.sql on a branch of production
-  branch rehearse-004-widen-amount-muedf9jx ready in 2.3s
-  FAIL  ran in 13.2s
+  branch rehearse-004-widen-amount-mueeasil ready in 2.4s
+  FAIL  ran in 8.3s
     ok   runs     completed
     ok   app      no app query failed
-    FAIL blocking worst write 13114 ms, worst read 13147 ms (limit 1000 ms)
+    FAIL blocking worst write 8290 ms, worst read 8264 ms (limit 1000 ms)
     ok   rows     no table lost rows
+    waiting on a lock, query age 8018 ms  relation: INSERT INTO orders (customer_id, amount_cents, status) VALUES ($1, $2,
+    waiting on a lock, query age 7986 ms  relation: SELECT id, status FROM orders WHERE id = $1
     | --- Database: neondb	(Branch: br-ancient-salad-b2vntgbd)
-    | +++ Database: neondb	(Branch: br-purple-hat-b2rgmptv)
+    | +++ Database: neondb	(Branch: br-calm-dew-b2qkwcen)
     | @@ -55,9 +55,9 @@
     |  
     |  CREATE TABLE public.orders (

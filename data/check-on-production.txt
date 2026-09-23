@@ -1,24 +1,39 @@
 
 003_index_orders_created_at.sql on production itself
-  FAIL  ran in 2.4s
+  FAIL  ran in 2.3s
     ok   runs     completed
     ok   app      no app query failed
-    FAIL blocking worst write 2374 ms, worst read 46 ms (limit 1000 ms)
+    FAIL blocking worst write 2156 ms, worst read 48 ms (limit 1000 ms)
     ok   rows     no table lost rows
-  restored production to 2026-09-23T17:21:00.873Z in 7.5s; schema and row counts match the restore point
+    waiting on a lock, query age 1908 ms  relation: INSERT INTO orders (customer_id, amount_cents, status) VALUES ($1, $2,
+  restored production to 2026-09-23T17:52:04.566Z in 8.2s; columns, constraints, indexes and row counts match the restore point
 
 004_widen_amount.sql on production itself
-  FAIL  ran in 9.3s
+  FAIL  ran in 8.5s
     ok   runs     completed
     ok   app      no app query failed
-    FAIL blocking worst write 9215 ms, worst read 9138 ms (limit 1000 ms)
+    FAIL blocking worst write 8472 ms, worst read 8471 ms (limit 1000 ms)
     ok   rows     no table lost rows
-  restored production to 2026-09-23T17:21:28.420Z in 8.5s; schema and row counts match the restore point
+    waiting on a lock, query age 8358 ms  relation: INSERT INTO orders (customer_id, amount_cents, status) VALUES ($1, $2,
+    waiting on a lock, query age 8355 ms  relation: SELECT id, status FROM orders WHERE id = $1
+  restored production to 2026-09-23T17:52:31.701Z in 8.3s; columns, constraints, indexes and row counts match the restore point
 
 004_widen_amount.sql on production itself
-  FAIL  ran in 8.2s
+  FAIL  ran in 8.5s
     ok   runs     completed
     ok   app      no app query failed
-    FAIL blocking worst write 8034 ms, worst read 8042 ms (limit 1000 ms)
+    FAIL blocking worst write 8241 ms, worst read 8237 ms (limit 1000 ms)
     ok   rows     no table lost rows
-  restored production to 2026-09-23T17:22:01.748Z in 8.6s; schema and row counts match the restore point
+    waiting on a lock, query age 8109 ms  relation: INSERT INTO orders (customer_id, amount_cents, status) VALUES ($1, $2,
+    waiting on a lock, query age 8109 ms  relation: SELECT id, status FROM orders WHERE id = $1
+  restored production to 2026-09-23T17:53:04.194Z in 8.7s; columns, constraints, indexes and row counts match the restore point
+
+004_widen_amount.sql on production itself
+  FAIL  ran in 8.4s
+    ok   runs     completed
+    ok   app      no app query failed
+    FAIL blocking worst write 8257 ms, worst read 8334 ms (limit 1000 ms)
+    ok   rows     no table lost rows
+    waiting on a lock, query age 8073 ms  relation: SELECT id, status FROM orders WHERE id = $1
+    waiting on a lock, query age 7989 ms  relation: INSERT INTO orders (customer_id, amount_cents, status) VALUES ($1, $2,
+  restored production to 2026-09-23T17:53:35.918Z in 8.8s; columns, constraints, indexes and row counts match the restore point

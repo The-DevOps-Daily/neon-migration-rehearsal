@@ -6,6 +6,6 @@ export function connect(uri, options = {}) {
   const url = new URL(uri);
   url.searchParams.set('sslmode', 'verify-full');
   url.searchParams.delete('channel_binding');
-  const client = new pg.Client({ connectionString: url.toString(), ...options });
+  const client = new pg.Client({ connectionString: url.toString(), connectionTimeoutMillis: 30_000, ...options });
   return client.connect().then(() => client);
 }

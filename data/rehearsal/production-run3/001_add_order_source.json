@@ -1,20 +1,29 @@
 {
+  "id": "001_add_order_source.sql",
   "migration": "001_add_order_source.sql",
   "against": "production",
-  "branch": "rehearse-001-add-order-source-mued535j",
-  "branchReadyMs": 2423,
-  "warmupMs": 1970,
-  "migrationMs": 130,
+  "branch": "rehearse-001-add-order-source-muee84oc",
+  "branchReadyMs": 2461,
+  "connections": {
+    "migration": "direct",
+    "app": "pooled"
+  },
+  "warmupMs": 1861,
+  "migrationMs": 165,
   "error": null,
   "traffic": {
-    "inserted": 22,
+    "inserted": 23,
     "writesDuring": 1,
-    "readsDuring": 1,
-    "worstWriteMs": 93,
-    "worstReadMs": 34,
+    "readsDuring": 2,
+    "worstWriteMs": 53,
+    "worstReadMs": 45,
     "failedOps": []
   },
   "lockWaits": {},
+  "lockSamples": {
+    "ok": 13,
+    "failed": 0
+  },
   "rowsBefore": {
     "customers": 500000,
     "orders": 4000000,
@@ -22,7 +31,7 @@
   },
   "rowsAfter": {
     "customers": 500000,
-    "orders": 4000022,
+    "orders": 4000023,
     "orders_archive": 0
   },
   "rowDeltas": {
@@ -41,7 +50,7 @@
     },
     "blocking": {
       "pass": true,
-      "reason": "worst write 93 ms, worst read 34 ms (limit 1000 ms)"
+      "reason": "worst write 53 ms, worst read 45 ms (limit 1000 ms)"
     },
     "rows": {
       "pass": true,
@@ -49,7 +58,7 @@
     }
   },
   "verdict": "PASS",
-  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-calm-water-b2fthwxr)\n@@ -57,9 +57,10 @@\n     id bigint NOT NULL,\n     customer_id bigint NOT NULL,\n     amount_cents integer NOT NULL,\n     status text NOT NULL,\n-    created_at timestamp with time zone DEFAULT now() NOT NULL\n+    created_at timestamp with time zone DEFAULT now() NOT NULL,\n+    source text DEFAULT 'web'::text NOT NULL\n );\n \n \n ALTER TABLE public.orders OWNER TO neondb_owner;",
-  "cycleMs": 22522,
+  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-silent-waterfall-b2dzlgwt)\n@@ -57,9 +57,10 @@\n     id bigint NOT NULL,\n     customer_id bigint NOT NULL,\n     amount_cents integer NOT NULL,\n     status text NOT NULL,\n-    created_at timestamp with time zone DEFAULT now() NOT NULL\n+    created_at timestamp with time zone DEFAULT now() NOT NULL,\n+    source text DEFAULT 'web'::text NOT NULL\n );\n \n \n ALTER TABLE public.orders OWNER TO neondb_owner;",
+  "cycleMs": 19149,
   "deleteError": null
 }

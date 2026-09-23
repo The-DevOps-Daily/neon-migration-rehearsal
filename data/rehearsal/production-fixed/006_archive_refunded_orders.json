@@ -1,20 +1,29 @@
 {
+  "id": "006_archive_refunded_orders.sql",
   "migration": "006_archive_refunded_orders.sql",
   "against": "production",
-  "branch": "rehearse-006-archive-refunded-orders-muedbros",
-  "branchReadyMs": 2282,
-  "warmupMs": 1855,
-  "migrationMs": 2687,
+  "branch": "rehearse-006-archive-refunded-orders-mueef9hr",
+  "branchReadyMs": 2399,
+  "connections": {
+    "migration": "direct",
+    "app": "pooled"
+  },
+  "warmupMs": 1919,
+  "migrationMs": 2681,
   "error": null,
   "traffic": {
-    "inserted": 38,
+    "inserted": 37,
     "writesDuring": 17,
     "readsDuring": 19,
-    "worstWriteMs": 73,
-    "worstReadMs": 43,
+    "worstWriteMs": 85,
+    "worstReadMs": 53,
     "failedOps": []
   },
   "lockWaits": {},
+  "lockSamples": {
+    "ok": 24,
+    "failed": 0
+  },
   "rowsBefore": {
     "customers": 500000,
     "orders": 4000000,
@@ -22,13 +31,13 @@
   },
   "rowsAfter": {
     "customers": 500000,
-    "orders": 3466723,
-    "orders_archive": 533315
+    "orders": 3466705,
+    "orders_archive": 533332
   },
   "rowDeltas": {
     "customers": 0,
-    "orders": -533315,
-    "orders_archive": 533315
+    "orders": -533332,
+    "orders_archive": 533332
   },
   "gates": {
     "runs": {
@@ -41,15 +50,15 @@
     },
     "blocking": {
       "pass": true,
-      "reason": "worst write 73 ms, worst read 43 ms (limit 1000 ms)"
+      "reason": "worst write 85 ms, worst read 53 ms (limit 1000 ms)"
     },
     "rows": {
       "pass": true,
-      "reason": "533315 rows moved orders -> orders_archive (counts match)"
+      "reason": "533332 rows moved orders -> orders_archive (counts match)"
     }
   },
   "verdict": "PASS",
-  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-long-hat-b2oz8ju8)",
-  "cycleMs": 24478,
+  "schemaDiff": "--- Database: neondb\t(Branch: br-ancient-salad-b2vntgbd)\n+++ Database: neondb\t(Branch: br-still-feather-b2dkocdd)",
+  "cycleMs": 22619,
   "deleteError": null
 }

@@ -1,0 +1,24 @@
+
+004_widen_amount.sql on a branch of production
+  branch rehearse-004-widen-amount-mueebey9 ready in 2.4s
+  FAIL  ran in 8.4s
+    ok   runs     completed
+    ok   app      no app query failed
+    FAIL blocking worst write 8307 ms, worst read 8261 ms (limit 1000 ms)
+    ok   rows     no table lost rows
+    waiting on a lock, query age 8268 ms  relation: INSERT INTO orders (customer_id, amount_cents, status) VALUES ($1, $2,
+    waiting on a lock, query age 8216 ms  relation: SELECT id, status FROM orders WHERE id = $1
+    | --- Database: neondb	(Branch: br-ancient-salad-b2vntgbd)
+    | +++ Database: neondb	(Branch: br-wild-sky-b2ylmhoe)
+    | @@ -55,9 +55,9 @@
+    |  
+    |  CREATE TABLE public.orders (
+    |      id bigint NOT NULL,
+    |      customer_id bigint NOT NULL,
+    | -    amount_cents integer NOT NULL,
+    | +    amount_cents bigint NOT NULL,
+    |      status text NOT NULL,
+    |      created_at timestamp with time zone DEFAULT now() NOT NULL
+    |  );
+
+0 of 1 passed on production
